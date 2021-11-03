@@ -19,10 +19,6 @@ e3.fields << f6
 en1 = Enum.create!(name: 'enum1', labels: 'test', descriptions: 'test')
 en2 = Enum.create!(name: 'enum2', labels: 'test', descriptions: 'test')
 
-f1.enums << en1
-f3.enums << en2
-f6.enums << en1
-
 EnumerationMember.create!(name: 'enum_m1', labels: 'test', descriptions: 'test', enum: en1)
 EnumerationMember.create!(name: 'enum_m2', labels: 'test', descriptions: 'test', enum: en1)
 EnumerationMember.create!(name: 'enum_m3', labels: 'test', descriptions: 'test', enum: en1)
@@ -34,6 +30,9 @@ dt1 = Datatype.create!(name: 'datatype1', labels: 'test', descriptions: 'test')
 dt2 = Datatype.create!(name: 'datatype2', labels: 'test', descriptions: 'test')
 dt3 = Datatype.create!(name: 'datatype3', labels: 'test', descriptions: 'test')
 
-f2.datatypes << dt1
-f4.datatypes << dt2
-f5.datatypes << dt3
+Option.create!(field: f1, optionable: en1)
+Option.create!(field: f2, optionable: dt1)
+Option.create!(field: f3, optionable: en2)
+Option.create!(field: f4, optionable: dt2)
+Option.create!(field: f5, optionable: dt3)
+Option.create!(field: f6, optionable: en1)

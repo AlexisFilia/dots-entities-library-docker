@@ -7,4 +7,5 @@ class Entity < ApplicationRecord
                     foreign_key: 'parent_id'
   has_many :agent_links
   has_many :target_links
+  has_one :setting
 end
