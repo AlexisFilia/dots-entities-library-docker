@@ -1,4 +1,4 @@
 class Datatype < ApplicationRecord
-  has_many :used_in_fields, as: :optionable
-  has_many :fields, through: :used_in_fields
+  has_many :field_options, as: :option
+  has_many :fields, through: :field_options
 end

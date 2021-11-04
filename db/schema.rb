@@ -79,22 +79,22 @@ ActiveRecord::Schema.define(version: 2021_11_02_154103) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "field_options", force: :cascade do |t|
+    t.bigint "field_id", null: false
+    t.string "option_type", null: false
+    t.bigint "option_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["field_id"], name: "index_field_options_on_field_id"
+    t.index ["option_type", "option_id"], name: "index_field_options_on_option"
+  end
+
   create_table "fields", force: :cascade do |t|
     t.string "name"
     t.string "labels"
     t.string "descriptions"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-  end
-
-  create_table "options", force: :cascade do |t|
-    t.bigint "field_id", null: false
-    t.string "optionable_type", null: false
-    t.bigint "optionable_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["field_id"], name: "index_options_on_field_id"
-    t.index ["optionable_type", "optionable_id"], name: "index_options_on_optionable"
   end
 
   create_table "settings", force: :cascade do |t|
@@ -121,7 +121,7 @@ ActiveRecord::Schema.define(version: 2021_11_02_154103) do
   add_foreign_key "entities_fields", "entities"
   add_foreign_key "entities_fields", "fields"
   add_foreign_key "enumeration_members", "enums"
-  add_foreign_key "options", "fields"
+  add_foreign_key "field_options", "fields"
   add_foreign_key "settings", "entities"
   add_foreign_key "target_links", "actions"
   add_foreign_key "target_links", "entities"
