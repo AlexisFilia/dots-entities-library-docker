@@ -36,3 +36,26 @@ FieldOption.create!(field: f3, option: en2)
 FieldOption.create!(field: f4, option: dt2)
 FieldOption.create!(field: f5, option: dt3)
 FieldOption.create!(field: f6, option: en1)
+
+a1 = Action.create!(name: 'Action1')
+a2 = Action.create!(name: 'Action2')
+a3 = Action.create!(name: 'Action3')
+a4 = Action.create!(name: 'Action4')
+
+AgentLink.create!(entity: e1, action: a1)
+TargetLink.create!(entity: e2, action: a1)
+
+AgentLink.create!(entity: e1, action: a3)
+TargetLink.create!(entity: e3, action: a3)
+
+AgentLink.create!(entity: e2, action: a2)
+TargetLink.create!(entity: e3, action: a2)
+
+AgentLink.create!(entity: e3, action: a4)
+TargetLink.create!(entity: e2, action: a4)
+
+AgentLink.create!(entity: e2, action: a4)
+TargetLink.create!(entity: e3, action: a4)
+
+AgentLink.create!(entity: e1, action: a4)
+TargetLink.create!(entity: e3, action: a4)
