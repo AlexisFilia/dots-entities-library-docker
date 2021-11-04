@@ -8,6 +8,11 @@ module Types
     field :fields, [Types::FieldType], null: true
     field :parent, Types::EntityType, null: true
     field :children, [Types::EntityType], null: true
+    field :ancestors, [Types::EntityType], null: true
+    field :descendants, [Types::EntityType], null: true
+    field :siblings, [Types::EntityType], null: true
+    field :subtree, [Types::EntityType], null: true
+    field :path, [Types::EntityType], null: true
     field :created_at, GraphQL::Types::ISO8601DateTime, null: false
     field :updated_at, GraphQL::Types::ISO8601DateTime, null: false
   end
