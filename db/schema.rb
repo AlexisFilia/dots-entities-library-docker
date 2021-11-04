@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_02_154103) do
+ActiveRecord::Schema.define(version: 2021_11_04_142409) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -46,10 +46,10 @@ ActiveRecord::Schema.define(version: 2021_11_02_154103) do
     t.string "name"
     t.string "labels"
     t.string "descriptions"
-    t.bigint "parent_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["parent_id"], name: "index_entities_on_parent_id"
+    t.string "ancestry"
+    t.index ["ancestry"], name: "index_entities_on_ancestry"
   end
 
   create_table "entities_fields", force: :cascade do |t|
@@ -117,7 +117,6 @@ ActiveRecord::Schema.define(version: 2021_11_02_154103) do
 
   add_foreign_key "agent_links", "actions"
   add_foreign_key "agent_links", "entities"
-  add_foreign_key "entities", "entities", column: "parent_id"
   add_foreign_key "entities_fields", "entities"
   add_foreign_key "entities_fields", "fields"
   add_foreign_key "enumeration_members", "enums"

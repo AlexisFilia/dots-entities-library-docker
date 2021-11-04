@@ -27,6 +27,7 @@ gem 'bootsnap', '>= 1.4.4', require: false
 
 gem 'graphql', '~> 1.12', '>= 1.12.17'
 gem 'graphiql-rails', '~> 1.4', '>= 1.4.8'
+gem 'ancestry'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

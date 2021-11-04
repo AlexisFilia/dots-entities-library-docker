@@ -4,7 +4,6 @@ class CreateEntities < ActiveRecord::Migration[6.1]
       t.string :name
       t.string :labels
       t.string :descriptions
-      t.references :parent, foreign_key: { to_table: :entities }
 
       t.timestamps
     end
