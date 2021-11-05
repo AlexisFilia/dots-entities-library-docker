@@ -380,9 +380,12 @@ data_hash['@graph'].each do |element|
   if element['@type'].is_a?(Array)
     element['@type'].each do |type|
       ok = false if type.match(/schema:(.*)/).nil?
+      enum = type.match(/schema:(.*)/)[1]
     end
   elsif element['@type'].is_a?(String)
     next if element['@type'].match(/schema:(.*)/).nil?
+
+    enum = element['@type'].match(/schema:(.*)/)[1]
   end
   next unless ok
 
@@ -393,7 +396,9 @@ data_hash['@graph'].each do |element|
   puts "creating enum_option: #{name}" if VERBOSE_DETAILS
 
   ENUM_MEMBERS << element['@id']
-  ENUM_MEMBERS_DATA[name.to_sym] = format_basic_infos(name, element)
+  data = format_basic_infos(name, element)
+  data[:enum] = enum
+  ENUM_MEMBERS_DATA[name.to_sym] = data
 end
 
 if VERBOSE
@@ -508,7 +513,6 @@ if FEED_DB
 
   puts 'Creating enums in DB' if VERBOSE
   data = []
-  pp ENUMS_DATA.first
   ENUMS_DATA.keys.each do |key|
     data << { name: ENUMS_DATA[key][:name], labels: ENUMS_DATA[key][:labels],
               descriptions: ENUMS_DATA[key][:descriptions], created_at: DateTime.now, updated_at: DateTime.now }
@@ -518,10 +522,12 @@ if FEED_DB
 
   puts 'Creating enumeration_members in DB' if VERBOSE
   data = []
-  pp ENUM_MEMBERS_DATA.first
   ENUM_MEMBERS_DATA.keys.each do |key|
+    enum = Enum.find_by(name: ENUM_MEMBERS_DATA[key][:enum])
+    next if enum.blank?
+
     data << { name: ENUM_MEMBERS_DATA[key][:name], labels: ENUM_MEMBERS_DATA[key][:labels],
-              descriptions: ENUM_MEMBERS_DATA[key][:descriptions], created_at: DateTime.now, updated_at: DateTime.now }
+              descriptions: ENUM_MEMBERS_DATA[key][:descriptions], created_at: DateTime.now, updated_at: DateTime.now, enum_id: enum.id }
   end
   EnumerationMember.upsert_all(data, unique_by: nil)
   puts 'enumeration_members in DB have been created' if VERBOSE
