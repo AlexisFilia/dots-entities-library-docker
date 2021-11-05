@@ -227,6 +227,7 @@ def display_summary(data)
   puts "==> #{FIELDS_DATA.count} FIELDS"
   puts "==> #{ACTIONS_DATA.count} ACTIONS"
   puts "==> #{SPECIALS_DATA.count} SPECIALS"
+  p SPECIALS_DATA.keys
   puts '----------------------------'
   puts "TOTAL : #{DATATYPES.count + MORE_SPECIFIC_DATATYPES.count + ENUMS.count + ENTITIES.count + ENUM_MEMBERS.count + FIELDS_DATA.count + ACTIONS_DATA.count + SPECIALS_DATA.count}"
   puts '----------------------------'
@@ -458,15 +459,24 @@ data_hash['@graph'].each do |element|
     case where
     when 'field'
       puts "creating entity field: #{name}" if VERBOSE_DETAILS
-      FIELDS_DATA[name.to_sym] = {}
+      FIELDS_DATA[name.to_sym] = { name: name }
+      FIELDS_DATA[name.to_sym] = fill_info_with_langage(FIELDS_DATA[name.to_sym], element, 'labels', 'rdfs:label')
+      FIELDS_DATA[name.to_sym] =
+        fill_info_with_langage(FIELDS_DATA[name.to_sym], element, 'descriptions', 'rdfs:comment')
       ENTITIES_DATA[domain.to_sym][:fields][name.to_sym] = {}
     when 'action'
       puts "creating entity action: #{name}" if VERBOSE_DETAILS
-      ACTIONS_DATA[name.to_sym] = {}
+      ACTIONS_DATA[name.to_sym] = { name: name }
+      ACTIONS_DATA[name.to_sym] = fill_info_with_langage(ACTIONS_DATA[name.to_sym], element, 'labels', 'rdfs:label')
+      ACTIONS_DATA[name.to_sym] =
+        fill_info_with_langage(ACTIONS_DATA[name.to_sym], element, 'descriptions', 'rdfs:comment')
       ENTITIES_DATA[domain.to_sym][:actions][name.to_sym] = {}
     when 'enum'
       puts "creating special properties: #{name}" if VERBOSE_DETAILS
-      SPECIALS_DATA[name.to_sym] = {}
+      SPECIALS_DATA[name.to_sym] = { name: name }
+      SPECIALS_DATA[name.to_sym] = fill_info_with_langage(SPECIALS_DATA[name.to_sym], element, 'labels', 'rdfs:label')
+      SPECIALS_DATA[name.to_sym] =
+        fill_info_with_langage(SPECIALS_DATA[name.to_sym], element, 'descriptions', 'rdfs:comment')
     when 'issue'
       if VERBOSE_DETAILS
         puts '---------------------'
@@ -535,6 +545,24 @@ if FEED_DB
   EnumerationMember.upsert_all(data, unique_by: nil)
   puts 'enumeration_members in DB have been created' if VERBOSE
 
+  puts 'Creating fields in DB' if VERBOSE
+  data = []
+  FIELDS_DATA.keys.each do |key|
+    data << { name: FIELDS_DATA[key][:name], labels: FIELDS_DATA[key][:labels],
+              descriptions: FIELDS_DATA[key][:descriptions], created_at: DateTime.now, updated_at: DateTime.now }
+  end
+  Field.upsert_all(data, unique_by: nil)
+  puts 'fields in DB have been created' if VERBOSE
+
+  puts 'Creating actions in DB' if VERBOSE
+  data = []
+  ACTIONS_DATA.keys.each do |key|
+    data << { name: ACTIONS_DATA[key][:name], labels: ACTIONS_DATA[key][:labels],
+              descriptions: ACTIONS_DATA[key][:descriptions], created_at: DateTime.now, updated_at: DateTime.now }
+  end
+  Action.upsert_all(data, unique_by: nil)
+  puts 'actions in DB have been created' if VERBOSE
+
   puts 'Creating entities in DB' if VERBOSE
   data = []
   ENTITIES_DATA.keys.each do |key|
@@ -557,8 +585,3 @@ end
 display_summary(data_hash['@graph']) if VERBOSE
 
 puts 'SCRIPT ENDING'
-
-# ENTITIES_DATA = {}
-# FIELDS_DATA = {}
-# ACTIONS_DATA = {}
-# SPECIALS_DATA = {}
