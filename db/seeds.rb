@@ -357,7 +357,10 @@ data_hash['@graph'].each do |element|
   puts "creating entity: #{name}" if VERBOSE_DETAILS
 
   ENTITIES << element['@id']
-  ENTITIES_DATA[name.to_sym] = format_basic_infos(name, element)
+  data = format_basic_infos(name, element)
+  data[:parent] = get_name(element['rdfs:subClassOf']) if element['rdfs:subClassOf'].is_a?(Hash)
+  data[:parent] = get_name(element['rdfs:subClassOf'][1]) if element['rdfs:subClassOf'].is_a?(Array)
+  ENTITIES_DATA[name.to_sym] = data
 end
 
 if VERBOSE
@@ -532,6 +535,22 @@ if FEED_DB
   EnumerationMember.upsert_all(data, unique_by: nil)
   puts 'enumeration_members in DB have been created' if VERBOSE
 
+  puts 'Creating entities in DB' if VERBOSE
+  data = []
+  ENTITIES_DATA.keys.each do |key|
+    data << { name: ENTITIES_DATA[key][:name], labels: ENTITIES_DATA[key][:labels],
+              descriptions: ENTITIES_DATA[key][:descriptions], created_at: DateTime.now, updated_at: DateTime.now }
+  end
+  Entity.upsert_all(data, unique_by: nil)
+  ENTITIES_DATA.keys.each do |key|
+    parent = Entity.find_by(name: ENTITIES_DATA[key][:parent])
+    child = Entity.find_by(name: ENTITIES_DATA[key][:name])
+    next if parent.blank? || child.blank?
+
+    child.update!(parent: parent)
+  end
+  puts 'entities in DB have been created' if VERBOSE
+
   puts 'DB ELEMENTS HAVE BEEN CREATED FROM DATA' if VERBOSE
 end
 
@@ -539,7 +558,6 @@ display_summary(data_hash['@graph']) if VERBOSE
 
 puts 'SCRIPT ENDING'
 
-# ENUMS_DATA = {}
 # ENTITIES_DATA = {}
 # FIELDS_DATA = {}
 # ACTIONS_DATA = {}
