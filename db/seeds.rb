@@ -187,6 +187,7 @@ def call_recursive_loop(data_hash)
     give_inheritance(ALL_VARIABLES, child['name'], parent_data)
     call_recursive_loop(child)
   end
+  puts 'ACTIONS / FIELDS CREATED FROM INHERITANCE' if VERBOSE
 end
 
 def is_data_type?(element)
@@ -218,370 +219,409 @@ def is_property?(element)
 end
 
 def display_summary(data)
-  puts "#{DATATYPES.count} DATATYPES have been created"
-  puts "#{MORE_SPECIFIC_DATATYPES.count} MORE_SPECIFIC_DATATYPES have been created"
-  puts "#{ENUMS.count} ENUMS have been created"
-  puts "#{ENTITIES.count} ENTITIES have been created"
-  puts "#{ENUM_MEMBERS.count} ENUMERATION_MEMBERS have been created"
-  puts "#{FIELDS_DATA.count + ACTIONS_DATA.count + SPECIALS_DATA.count} PROPERTIES (ACTIONS / FIELDS / SPECIALS) have been created"
-  puts "==> #{FIELDS_DATA.count} FIELDS"
-  puts "==> #{ACTIONS_DATA.count} ACTIONS"
-  puts "==> #{SPECIALS_DATA.count} SPECIALS"
-  p SPECIALS_DATA.keys
-  puts '----------------------------'
-  puts "TOTAL : #{DATATYPES.count + MORE_SPECIFIC_DATATYPES.count + ENUMS.count + ENTITIES.count + ENUM_MEMBERS.count + FIELDS_DATA.count + ACTIONS_DATA.count + SPECIALS_DATA.count}"
-  puts '----------------------------'
-  puts "Erreurs : #{ERRORS.count}"
-  p ERRORS
-  if WITHOUT_SUPERSEDED_BY
-    puts 'Note : Without the superseded'
-  else
-    puts "Number of SUPERSEDED_BY inclued : #{SUPERSEDED_BY.count}"
-    p SUPERSEDED_BY
-  end
-  puts "#{data.count} in total in the file Schema.org"
-  puts "#{@counter} in total in the file Schema.org (Tree)"
-  puts '----------------------------'
-  puts 'Opening the tree.jsonld file from the web'
-  puts "Missing elements in the first loop: #{NOT_FOUND1.count}"
-  p NOT_FOUND1
-  puts "Missing elements in the second loop: #{NOT_FOUND2.count}"
-  p NOT_FOUND2
-end
-
-if VERBOSE
-  puts 'SCRIPT STARTING'
-  puts '----------------------------'
-  puts 'Opening the schema.json file from web'
-end
-
-file = open(URI.parse('https://schema.org/version/latest/schemaorg-current-https.jsonld')).read
-data_hash = JSON.parse(file)
-
-if VERBOSE
-  puts '----------------------------'
-  puts 'GET DATATYPES'
-end
-
-data_hash['@graph'].each do |element|
-  next if !element['schema:supersededBy'].nil? && WITHOUT_SUPERSEDED_BY
-  next unless is_data_type?(element)
-
-  name = get_name(element)
-
-  puts "creating Data_type : #{name}" if VERBOSE_DETAILS
-
-  DATATYPES << element['@id']
-  DATATYPES_DATA[name.to_sym] = format_basic_infos(name, element)
-end
-
-if VERBOSE
-  puts "#{DATATYPES.count} DATATYPES have been created"
-  puts '----------------------------'
-  puts 'GET MORE_SPECIFIC_DATATYPES'
-end
-
-data_hash['@graph'].each do |element|
-  next if !element['schema:supersededBy'].nil? && WITHOUT_SUPERSEDED_BY
-  next if DATATYPES.include?(element['@id'])
-  next unless is_specific_data_type?(element)
-
-  name = get_name(element)
-
-  SUPERSEDED_BY << name unless element['schema:supersededBy'].nil?
-
-  puts "creating Data_type - More Specific : #{name}" if VERBOSE_DETAILS
-
-  MORE_SPECIFIC_DATATYPES << element['@id']
-  MORE_SPECIFIC_DATATYPES_DATA[name.to_sym] = format_basic_infos(name, element)
-end
-
-if VERBOSE
-  puts "#{MORE_SPECIFIC_DATATYPES.count} MORE_SPECIFIC_DATATYPES have been created"
-  puts '----------------------------'
-  puts 'CREATE ENUMS - Round 1'
-end
-
-data_hash['@graph'].each do |element|
-  next if !element['schema:supersededBy'].nil? && WITHOUT_SUPERSEDED_BY
-  next if DATATYPES.include?(element['@id'])
-  next if MORE_SPECIFIC_DATATYPES.include?(element['@id'])
-  next unless is_enum_from_enumerable?(element)
-
-  name = get_name(element)
-
-  SUPERSEDED_BY << name unless element['schema:supersededBy'].nil?
-
-  puts "creating enum: #{name}" if VERBOSE_DETAILS
-
-  ENUMS << element['@id']
-  ENUMS_DATA[name.to_sym] = format_basic_infos(name, element)
-end
-
-puts 'CREATE ENUMS - Round 2' if VERBOSE
-
-data_hash['@graph'].each do |element|
-  next if !element['schema:supersededBy'].nil? && WITHOUT_SUPERSEDED_BY
-  next if DATATYPES.include?(element['@id'])
-  next if MORE_SPECIFIC_DATATYPES.include?(element['@id'])
-  next if ENUMS.include?(element['@id'])
-  next unless is_enum_child_from_enumerable?(element)
-
-  name = get_name(element)
-
-  SUPERSEDED_BY << name unless element['schema:supersededBy'].nil?
-
-  puts "creating enum: #{name}" if VERBOSE_DETAILS
-
-  ENUMS << element['@id']
-  ENUMS_DATA[name.to_sym] = format_basic_infos(name, element)
-end
-
-if VERBOSE
-  puts 'ENUMS CREATED'
-  puts "#{ENUMS.count} ENUMS have been created"
-  puts '----------------------------'
-  puts 'CREATE ENTITIES'
-end
-
-data_hash['@graph'].each do |element|
-  next if !element['schema:supersededBy'].nil? && WITHOUT_SUPERSEDED_BY
-  next if DATATYPES.include?(element['@id'])
-  next if MORE_SPECIFIC_DATATYPES.include?(element['@id'])
-  next if ENUMS.include?(element['@id'])
-  next unless element['@type'] == 'rdfs:Class'
-
-  name = get_name(element)
-
-  SUPERSEDED_BY << name unless element['schema:supersededBy'].nil?
-
-  puts "creating entity: #{name}" if VERBOSE_DETAILS
-
-  ENTITIES << element['@id']
-  data = format_basic_infos(name, element)
-  data[:parent] = get_name(element['rdfs:subClassOf']) if element['rdfs:subClassOf'].is_a?(Hash)
-  data[:parent] = get_name(element['rdfs:subClassOf'][1]) if element['rdfs:subClassOf'].is_a?(Array)
-  ENTITIES_DATA[name.to_sym] = data
-end
-
-if VERBOSE
-  puts 'ENTITIES CREATED'
-  puts "#{ENTITIES.count} ENTITIES have been created"
-  puts '----------------------------'
-  puts 'CREATE ENUMERATION_MEMBERS'
-end
-
-puts 'ENUMERATION_MEMBERS CREATED' if VERBOSE
-
-data_hash['@graph'].each do |element|
-  next if !element['schema:supersededBy'].nil? && WITHOUT_SUPERSEDED_BY
-  next if DATATYPES.include?(element['@id'])
-  next if MORE_SPECIFIC_DATATYPES.include?(element['@id'])
-  next if ENUMS.include?(element['@id'])
-  next if ENTITIES.include?(element['@id'])
-
-  ok = true
-  if element['@type'].is_a?(Array)
-    element['@type'].each do |type|
-      ok = false if type.match(/schema:(.*)/).nil?
-      enum = type.match(/schema:(.*)/)[1]
-    end
-  elsif element['@type'].is_a?(String)
-    next if element['@type'].match(/schema:(.*)/).nil?
-
-    enum = element['@type'].match(/schema:(.*)/)[1]
-  end
-  next unless ok
-
-  name = get_name(element)
-
-  SUPERSEDED_BY << name unless element['schema:supersededBy'].nil?
-
-  puts "creating enum_option: #{name}" if VERBOSE_DETAILS
-
-  ENUM_MEMBERS << element['@id']
-  data = format_basic_infos(name, element)
-  data[:enum] = enum
-  ENUM_MEMBERS_DATA[name.to_sym] = data
-end
-
-if VERBOSE
-  puts "#{ENUM_MEMBERS.count} ENUMERATION_MEMBERS have been created"
-  puts '----------------------------'
-  puts 'CREATE ACTIONS / FIELDS or ENUMERATION_MEMBERS'
-end
-
-data_hash['@graph'].each do |element|
-  next if !element['schema:supersededBy'].nil? && WITHOUT_SUPERSEDED_BY
-  next if DATATYPES.include?(element['@id'])
-  next if MORE_SPECIFIC_DATATYPES.include?(element['@id'])
-  next if ENUMS.include?(element['@id'])
-  next if ENTITIES.include?(element['@id'])
-  next if ENUM_MEMBERS.include?(element['@id'])
-  next unless is_property?(element)
-
-  name = get_name(element)
-
-  SUPERSEDED_BY << name unless element['schema:supersededBy'].nil?
-
-  data = format_basic_infos(name, element)
-  data = fill_property_infos(data, element)
-
-  where = ''
-
-  data[:rangeIncludes].each do |domain|
-    if ENTITIES.include?('schema:' + domain)
-      where = 'action'
-      break
-    elsif DATATYPES.include?('schema:' + domain) || MORE_SPECIFIC_DATATYPES.include?('schema:' + domain)
-      where = 'field'
-    elsif ENUMS.include?('schema:' + domain)
-      where = 'enum'
+  if VERBOSE
+    puts "#{DATATYPES.count} DATATYPES have been created"
+    puts "#{MORE_SPECIFIC_DATATYPES.count} MORE_SPECIFIC_DATATYPES have been created"
+    puts "#{ENUMS.count} ENUMS have been created"
+    puts "#{ENTITIES.count} ENTITIES have been created"
+    puts "#{ENUM_MEMBERS.count} ENUMERATION_MEMBERS have been created"
+    puts "#{FIELDS_DATA.count + ACTIONS_DATA.count + SPECIALS_DATA.count} PROPERTIES (ACTIONS / FIELDS / SPECIALS) have been created"
+    puts "==> #{FIELDS_DATA.count} FIELDS"
+    puts "==> #{ACTIONS_DATA.count} ACTIONS"
+    puts "==> #{SPECIALS_DATA.count} SPECIALS"
+    p SPECIALS_DATA.keys
+    puts '----------------------------'
+    puts "TOTAL : #{DATATYPES.count + MORE_SPECIFIC_DATATYPES.count + ENUMS.count + ENTITIES.count + ENUM_MEMBERS.count + FIELDS_DATA.count + ACTIONS_DATA.count + SPECIALS_DATA.count}"
+    puts '----------------------------'
+    puts "Erreurs : #{ERRORS.count}"
+    p ERRORS
+    if WITHOUT_SUPERSEDED_BY
+      puts 'Note : Without the superseded'
     else
-      ERRORS << domain
-      where = 'issue'
-      break
+      puts "Number of SUPERSEDED_BY inclued : #{SUPERSEDED_BY.count}"
+      p SUPERSEDED_BY
     end
+    puts "#{data.count} in total in the file Schema.org"
+    puts "#{@counter} in total in the file Schema.org (Tree)"
+    puts '----------------------------'
+    puts 'Opening the tree.jsonld file from the web'
+    puts "Missing elements in the first loop: #{NOT_FOUND1.count}"
+    p NOT_FOUND1
+    puts "Missing elements in the second loop: #{NOT_FOUND2.count}"
+    p NOT_FOUND2
+  end
+end
+
+def load_schema_from_web
+  if VERBOSE
+    puts '----------------------------'
+    puts 'Opening the schema.json file from web'
   end
 
-  data[:domainIncludes].each do |domain|
-    next if ENTITIES_DATA[domain.to_sym].nil?
+  file = open(URI.parse('https://schema.org/version/latest/schemaorg-current-https.jsonld')).read
+  JSON.parse(file)
+end
 
-    if !ENTITIES_DATA[domain.to_sym].nil? && ENTITIES_DATA[domain.to_sym][:fields].nil?
-      ENTITIES_DATA[domain.to_sym][:fields] =
-        {}
+def collect_datatypes(data_hash)
+  if VERBOSE
+    puts '----------------------------'
+    puts 'GET DATATYPES'
+  end
+
+  data_hash['@graph'].each do |element|
+    next if !element['schema:supersededBy'].nil? && WITHOUT_SUPERSEDED_BY
+    next unless is_data_type?(element)
+
+    name = get_name(element)
+
+    puts "creating Data_type : #{name}" if VERBOSE_DETAILS
+
+    DATATYPES << element['@id']
+    DATATYPES_DATA[name.to_sym] = format_basic_infos(name, element)
+  end
+
+  puts "#{DATATYPES.count} DATATYPES have been created" if VERBOSE
+end
+
+def collect_more_specific_datatypes(data_hash)
+  if VERBOSE
+    puts '----------------------------'
+    puts 'GET MORE_SPECIFIC_DATATYPES'
+  end
+
+  data_hash['@graph'].each do |element|
+    next if !element['schema:supersededBy'].nil? && WITHOUT_SUPERSEDED_BY
+    next if DATATYPES.include?(element['@id'])
+    next unless is_specific_data_type?(element)
+
+    name = get_name(element)
+
+    SUPERSEDED_BY << name unless element['schema:supersededBy'].nil?
+
+    puts "creating Data_type - More Specific : #{name}" if VERBOSE_DETAILS
+
+    MORE_SPECIFIC_DATATYPES << element['@id']
+    MORE_SPECIFIC_DATATYPES_DATA[name.to_sym] = format_basic_infos(name, element)
+  end
+
+  puts "#{MORE_SPECIFIC_DATATYPES.count} MORE_SPECIFIC_DATATYPES have been created" if VERBOSE
+end
+
+def collect_enums(data_hash)
+  if VERBOSE
+    puts '----------------------------'
+    puts 'CREATE ENUMS - Round 1'
+  end
+
+  data_hash['@graph'].each do |element|
+    next if !element['schema:supersededBy'].nil? && WITHOUT_SUPERSEDED_BY
+    next if DATATYPES.include?(element['@id'])
+    next if MORE_SPECIFIC_DATATYPES.include?(element['@id'])
+    next unless is_enum_from_enumerable?(element)
+
+    name = get_name(element)
+
+    SUPERSEDED_BY << name unless element['schema:supersededBy'].nil?
+
+    puts "creating enum: #{name}" if VERBOSE_DETAILS
+
+    ENUMS << element['@id']
+    ENUMS_DATA[name.to_sym] = format_basic_infos(name, element)
+  end
+
+  puts 'CREATE ENUMS - Round 2' if VERBOSE
+
+  data_hash['@graph'].each do |element|
+    next if !element['schema:supersededBy'].nil? && WITHOUT_SUPERSEDED_BY
+    next if DATATYPES.include?(element['@id'])
+    next if MORE_SPECIFIC_DATATYPES.include?(element['@id'])
+    next if ENUMS.include?(element['@id'])
+    next unless is_enum_child_from_enumerable?(element)
+
+    name = get_name(element)
+
+    SUPERSEDED_BY << name unless element['schema:supersededBy'].nil?
+
+    puts "creating enum: #{name}" if VERBOSE_DETAILS
+
+    ENUMS << element['@id']
+    ENUMS_DATA[name.to_sym] = format_basic_infos(name, element)
+  end
+
+  if VERBOSE
+    puts 'ENUMS CREATED'
+    puts "#{ENUMS.count} ENUMS have been created"
+  end
+end
+
+def collect_entities(data_hash)
+  if VERBOSE
+    puts '----------------------------'
+    puts 'CREATE ENTITIES'
+  end
+
+  data_hash['@graph'].each do |element|
+    next if !element['schema:supersededBy'].nil? && WITHOUT_SUPERSEDED_BY
+    next if DATATYPES.include?(element['@id'])
+    next if MORE_SPECIFIC_DATATYPES.include?(element['@id'])
+    next if ENUMS.include?(element['@id'])
+    next unless element['@type'] == 'rdfs:Class'
+
+    name = get_name(element)
+
+    SUPERSEDED_BY << name unless element['schema:supersededBy'].nil?
+
+    puts "creating entity: #{name}" if VERBOSE_DETAILS
+
+    ENTITIES << element['@id']
+    data = format_basic_infos(name, element)
+    data[:parent] = get_name(element['rdfs:subClassOf']) if element['rdfs:subClassOf'].is_a?(Hash)
+    data[:parent] = get_name(element['rdfs:subClassOf'][1]) if element['rdfs:subClassOf'].is_a?(Array)
+    ENTITIES_DATA[name.to_sym] = data
+  end
+
+  if VERBOSE
+    puts 'ENTITIES CREATED'
+    puts "#{ENTITIES.count} ENTITIES have been created"
+  end
+end
+
+def collect_enum_members(data_hash)
+  if VERBOSE
+    puts '----------------------------'
+    puts 'CREATE ENUMERATION_MEMBERS'
+  end
+
+  puts 'ENUMERATION_MEMBERS CREATED' if VERBOSE
+
+  data_hash['@graph'].each do |element|
+    next if !element['schema:supersededBy'].nil? && WITHOUT_SUPERSEDED_BY
+    next if DATATYPES.include?(element['@id'])
+    next if MORE_SPECIFIC_DATATYPES.include?(element['@id'])
+    next if ENUMS.include?(element['@id'])
+    next if ENTITIES.include?(element['@id'])
+
+    ok = true
+    if element['@type'].is_a?(Array)
+      element['@type'].each do |type|
+        ok = false if type.match(/schema:(.*)/).nil?
+        enum = type.match(/schema:(.*)/)[1]
+      end
+    elsif element['@type'].is_a?(String)
+      next if element['@type'].match(/schema:(.*)/).nil?
+
+      enum = element['@type'].match(/schema:(.*)/)[1]
     end
-    if !ENTITIES_DATA[domain.to_sym].nil? && ENTITIES_DATA[domain.to_sym][:actions].nil?
-      ENTITIES_DATA[domain.to_sym][:actions] =
-        {}
+    next unless ok
+
+    name = get_name(element)
+
+    SUPERSEDED_BY << name unless element['schema:supersededBy'].nil?
+
+    puts "creating enum_option: #{name}" if VERBOSE_DETAILS
+
+    ENUM_MEMBERS << element['@id']
+    data = format_basic_infos(name, element)
+    data[:enum] = enum
+    ENUM_MEMBERS_DATA[name.to_sym] = data
+  end
+
+  puts "#{ENUM_MEMBERS.count} ENUMERATION_MEMBERS have been created" if VERBOSE
+end
+
+def collect_fields_and_actions(data_hash)
+  if VERBOSE
+    puts '----------------------------'
+    puts 'CREATE ACTIONS / FIELDS'
+  end
+
+  data_hash['@graph'].each do |element|
+    next if !element['schema:supersededBy'].nil? && WITHOUT_SUPERSEDED_BY
+    next if DATATYPES.include?(element['@id'])
+    next if MORE_SPECIFIC_DATATYPES.include?(element['@id'])
+    next if ENUMS.include?(element['@id'])
+    next if ENTITIES.include?(element['@id'])
+    next if ENUM_MEMBERS.include?(element['@id'])
+    next unless is_property?(element)
+
+    name = get_name(element)
+
+    SUPERSEDED_BY << name unless element['schema:supersededBy'].nil?
+
+    data = format_basic_infos(name, element)
+    data = fill_property_infos(data, element)
+
+    where = ''
+
+    data[:rangeIncludes].each do |domain|
+      if ENTITIES.include?('schema:' + domain)
+        where = 'action'
+        break
+      elsif DATATYPES.include?('schema:' + domain) || MORE_SPECIFIC_DATATYPES.include?('schema:' + domain)
+        where = 'field'
+      elsif ENUMS.include?('schema:' + domain)
+        where = 'enum'
+      else
+        ERRORS << domain
+        where = 'issue'
+        break
+      end
     end
 
-    case where
-    when 'field'
-      puts "creating entity field: #{name}" if VERBOSE_DETAILS
-      FIELDS_DATA[name.to_sym] = { name: name }
-      FIELDS_DATA[name.to_sym] = fill_info_with_langage(FIELDS_DATA[name.to_sym], element, 'labels', 'rdfs:label')
-      FIELDS_DATA[name.to_sym] =
-        fill_info_with_langage(FIELDS_DATA[name.to_sym], element, 'descriptions', 'rdfs:comment')
-      ENTITIES_DATA[domain.to_sym][:fields][name.to_sym] = {}
-    when 'action'
-      puts "creating entity action: #{name}" if VERBOSE_DETAILS
-      ACTIONS_DATA[name.to_sym] = { name: name }
-      ACTIONS_DATA[name.to_sym] = fill_info_with_langage(ACTIONS_DATA[name.to_sym], element, 'labels', 'rdfs:label')
-      ACTIONS_DATA[name.to_sym] =
-        fill_info_with_langage(ACTIONS_DATA[name.to_sym], element, 'descriptions', 'rdfs:comment')
-      ENTITIES_DATA[domain.to_sym][:actions][name.to_sym] = {}
-    when 'enum'
-      puts "creating special properties: #{name}" if VERBOSE_DETAILS
-      SPECIALS_DATA[name.to_sym] = { name: name }
-      SPECIALS_DATA[name.to_sym] = fill_info_with_langage(SPECIALS_DATA[name.to_sym], element, 'labels', 'rdfs:label')
-      SPECIALS_DATA[name.to_sym] =
-        fill_info_with_langage(SPECIALS_DATA[name.to_sym], element, 'descriptions', 'rdfs:comment')
-    when 'issue'
-      if VERBOSE_DETAILS
-        puts '---------------------'
-        puts '|       ISSUE       |'
-        puts '---------------------'
+    data[:domainIncludes].each do |domain|
+      next if ENTITIES_DATA[domain.to_sym].nil?
+
+      if !ENTITIES_DATA[domain.to_sym].nil? && ENTITIES_DATA[domain.to_sym][:fields].nil?
+        ENTITIES_DATA[domain.to_sym][:fields] =
+          {}
+      end
+      if !ENTITIES_DATA[domain.to_sym].nil? && ENTITIES_DATA[domain.to_sym][:actions].nil?
+        ENTITIES_DATA[domain.to_sym][:actions] =
+          {}
+      end
+
+      case where
+      when 'field'
+        puts "creating entity field: #{name}" if VERBOSE_DETAILS
+        FIELDS_DATA[name.to_sym] = { name: name }
+        FIELDS_DATA[name.to_sym] = fill_info_with_langage(FIELDS_DATA[name.to_sym], element, 'labels', 'rdfs:label')
+        FIELDS_DATA[name.to_sym] =
+          fill_info_with_langage(FIELDS_DATA[name.to_sym], element, 'descriptions', 'rdfs:comment')
+        ENTITIES_DATA[domain.to_sym][:fields][name.to_sym] = {}
+      when 'action'
+        puts "creating entity action: #{name}" if VERBOSE_DETAILS
+        ACTIONS_DATA[name.to_sym] = { name: name }
+        ACTIONS_DATA[name.to_sym] = fill_info_with_langage(ACTIONS_DATA[name.to_sym], element, 'labels', 'rdfs:label')
+        ACTIONS_DATA[name.to_sym] =
+          fill_info_with_langage(ACTIONS_DATA[name.to_sym], element, 'descriptions', 'rdfs:comment')
+        ENTITIES_DATA[domain.to_sym][:actions][name.to_sym] = {}
+      when 'enum'
+        puts "creating special properties: #{name}" if VERBOSE_DETAILS
+        SPECIALS_DATA[name.to_sym] = { name: name }
+        SPECIALS_DATA[name.to_sym] = fill_info_with_langage(SPECIALS_DATA[name.to_sym], element, 'labels', 'rdfs:label')
+        SPECIALS_DATA[name.to_sym] =
+          fill_info_with_langage(SPECIALS_DATA[name.to_sym], element, 'descriptions', 'rdfs:comment')
+      when 'issue'
+        if VERBOSE_DETAILS
+          puts '---------------------'
+          puts '|       ISSUE       |'
+          puts '---------------------'
+        end
       end
     end
   end
 end
 
-puts 'USE TREE TO GENERATE ENTITIES FIELDS AND ACTIONS FROM INHERITANCE' if VERBOSE
-file = open(URI.parse('https://schema.org/docs/tree.jsonld')).read
-data_hash2 = JSON.parse(file)
-call_recursive_loop(data_hash2)
-puts 'ACTIONS / FIELDS CREATED FROM INHERITANCE' if VERBOSE
+def load_tree_from_web
+  puts 'USE TREE TO GENERATE ENTITIES FIELDS AND ACTIONS FROM INHERITANCE' if VERBOSE
+  file = open(URI.parse('https://schema.org/docs/tree.jsonld')).read
+  JSON.parse(file)
+end
 
-if FILE_CREATION
-  puts 'CREATING FILES FROM DATA' if VERBOSE
-  FOLDER_ORGANISATION.each do |folder|
-    eval(folder[:name]).each do |key, value|
-      out_file = create_file(folder[:path] + key.to_s, 'json')
-      out_file.puts(value.to_json)
-      out_file.close
+def create_files_from_data
+  if FILE_CREATION
+    puts 'CREATING FILES FROM DATA' if VERBOSE
+    FOLDER_ORGANISATION.each do |folder|
+      eval(folder[:name]).each do |key, value|
+        out_file = create_file(folder[:path] + key.to_s, 'json')
+        out_file.puts(value.to_json)
+        out_file.close
+      end
     end
+    puts 'FILES HAVE BEEN CREATED FROM DATA' if VERBOSE
   end
-  puts 'FILES HAVE BEEN CREATED FROM DATA' if VERBOSE
-end
-pp DATATYPES_DATA
-if FEED_DB
-  puts 'CREATING DB ELEMENTS FROM DATA' if VERBOSE
-
-  puts 'Creating datatype in DB' if VERBOSE
-  data = []
-  DATATYPES_DATA.keys.each do |key|
-    data << { name: DATATYPES_DATA[key][:name], labels: DATATYPES_DATA[key][:labels],
-              descriptions: DATATYPES_DATA[key][:descriptions], created_at: DateTime.now, updated_at: DateTime.now }
-  end
-  Datatype.upsert_all(data, unique_by: nil)
-
-  data = []
-  MORE_SPECIFIC_DATATYPES_DATA.keys.each do |key|
-    data << { name: MORE_SPECIFIC_DATATYPES_DATA[key][:name], labels: MORE_SPECIFIC_DATATYPES_DATA[key][:labels],
-              descriptions: MORE_SPECIFIC_DATATYPES_DATA[key][:descriptions], created_at: DateTime.now, updated_at: DateTime.now }
-  end
-  Datatype.upsert_all(data, unique_by: nil)
-  puts 'datatype in DB have been created' if VERBOSE
-
-  puts 'Creating enums in DB' if VERBOSE
-  data = []
-  ENUMS_DATA.keys.each do |key|
-    data << { name: ENUMS_DATA[key][:name], labels: ENUMS_DATA[key][:labels],
-              descriptions: ENUMS_DATA[key][:descriptions], created_at: DateTime.now, updated_at: DateTime.now }
-  end
-  Enum.upsert_all(data, unique_by: nil)
-  puts 'enums in DB have been created' if VERBOSE
-
-  puts 'Creating enumeration_members in DB' if VERBOSE
-  data = []
-  ENUM_MEMBERS_DATA.keys.each do |key|
-    enum = Enum.find_by(name: ENUM_MEMBERS_DATA[key][:enum])
-    next if enum.blank?
-
-    data << { name: ENUM_MEMBERS_DATA[key][:name], labels: ENUM_MEMBERS_DATA[key][:labels],
-              descriptions: ENUM_MEMBERS_DATA[key][:descriptions], created_at: DateTime.now, updated_at: DateTime.now, enum_id: enum.id }
-  end
-  EnumerationMember.upsert_all(data, unique_by: nil)
-  puts 'enumeration_members in DB have been created' if VERBOSE
-
-  puts 'Creating fields in DB' if VERBOSE
-  data = []
-  FIELDS_DATA.keys.each do |key|
-    data << { name: FIELDS_DATA[key][:name], labels: FIELDS_DATA[key][:labels],
-              descriptions: FIELDS_DATA[key][:descriptions], created_at: DateTime.now, updated_at: DateTime.now }
-  end
-  Field.upsert_all(data, unique_by: nil)
-  puts 'fields in DB have been created' if VERBOSE
-
-  puts 'Creating actions in DB' if VERBOSE
-  data = []
-  ACTIONS_DATA.keys.each do |key|
-    data << { name: ACTIONS_DATA[key][:name], labels: ACTIONS_DATA[key][:labels],
-              descriptions: ACTIONS_DATA[key][:descriptions], created_at: DateTime.now, updated_at: DateTime.now }
-  end
-  Action.upsert_all(data, unique_by: nil)
-  puts 'actions in DB have been created' if VERBOSE
-
-  puts 'Creating entities in DB' if VERBOSE
-  data = []
-  ENTITIES_DATA.keys.each do |key|
-    data << { name: ENTITIES_DATA[key][:name], labels: ENTITIES_DATA[key][:labels],
-              descriptions: ENTITIES_DATA[key][:descriptions], created_at: DateTime.now, updated_at: DateTime.now }
-  end
-  Entity.upsert_all(data, unique_by: nil)
-  ENTITIES_DATA.keys.each do |key|
-    parent = Entity.find_by(name: ENTITIES_DATA[key][:parent])
-    child = Entity.find_by(name: ENTITIES_DATA[key][:name])
-    next if parent.blank? || child.blank?
-
-    child.update!(parent: parent)
-  end
-  puts 'entities in DB have been created' if VERBOSE
-
-  puts 'DB ELEMENTS HAVE BEEN CREATED FROM DATA' if VERBOSE
 end
 
-display_summary(data_hash['@graph']) if VERBOSE
+def feed_DB_from_data
+  if FEED_DB
+    puts 'CREATING DB ELEMENTS FROM DATA' if VERBOSE
 
+    puts 'Creating datatype in DB' if VERBOSE
+    data = []
+    DATATYPES_DATA.keys.each do |key|
+      data << { name: DATATYPES_DATA[key][:name], labels: DATATYPES_DATA[key][:labels],
+                descriptions: DATATYPES_DATA[key][:descriptions], created_at: DateTime.now, updated_at: DateTime.now }
+    end
+    Datatype.upsert_all(data, unique_by: nil)
+
+    data = []
+    MORE_SPECIFIC_DATATYPES_DATA.keys.each do |key|
+      data << { name: MORE_SPECIFIC_DATATYPES_DATA[key][:name], labels: MORE_SPECIFIC_DATATYPES_DATA[key][:labels],
+                descriptions: MORE_SPECIFIC_DATATYPES_DATA[key][:descriptions], created_at: DateTime.now, updated_at: DateTime.now }
+    end
+    Datatype.upsert_all(data, unique_by: nil)
+    puts 'datatype in DB have been created' if VERBOSE
+
+    puts 'Creating enums in DB' if VERBOSE
+    data = []
+    ENUMS_DATA.keys.each do |key|
+      data << { name: ENUMS_DATA[key][:name], labels: ENUMS_DATA[key][:labels],
+                descriptions: ENUMS_DATA[key][:descriptions], created_at: DateTime.now, updated_at: DateTime.now }
+    end
+    Enum.upsert_all(data, unique_by: nil)
+    puts 'enums in DB have been created' if VERBOSE
+
+    puts 'Creating enumeration_members in DB' if VERBOSE
+    data = []
+    ENUM_MEMBERS_DATA.keys.each do |key|
+      enum = Enum.find_by(name: ENUM_MEMBERS_DATA[key][:enum])
+      next if enum.blank?
+
+      data << { name: ENUM_MEMBERS_DATA[key][:name], labels: ENUM_MEMBERS_DATA[key][:labels],
+                descriptions: ENUM_MEMBERS_DATA[key][:descriptions], created_at: DateTime.now, updated_at: DateTime.now, enum_id: enum.id }
+    end
+    EnumerationMember.upsert_all(data, unique_by: nil)
+    puts 'enumeration_members in DB have been created' if VERBOSE
+
+    puts 'Creating fields in DB' if VERBOSE
+    data = []
+    FIELDS_DATA.keys.each do |key|
+      data << { name: FIELDS_DATA[key][:name], labels: FIELDS_DATA[key][:labels],
+                descriptions: FIELDS_DATA[key][:descriptions], created_at: DateTime.now, updated_at: DateTime.now }
+    end
+    Field.upsert_all(data, unique_by: nil)
+    puts 'fields in DB have been created' if VERBOSE
+
+    puts 'Creating actions in DB' if VERBOSE
+    data = []
+    ACTIONS_DATA.keys.each do |key|
+      data << { name: ACTIONS_DATA[key][:name], labels: ACTIONS_DATA[key][:labels],
+                descriptions: ACTIONS_DATA[key][:descriptions], created_at: DateTime.now, updated_at: DateTime.now }
+    end
+    Action.upsert_all(data, unique_by: nil)
+    puts 'actions in DB have been created' if VERBOSE
+
+    puts 'Creating entities in DB' if VERBOSE
+    data = []
+    ENTITIES_DATA.keys.each do |key|
+      data << { name: ENTITIES_DATA[key][:name], labels: ENTITIES_DATA[key][:labels],
+                descriptions: ENTITIES_DATA[key][:descriptions], created_at: DateTime.now, updated_at: DateTime.now }
+    end
+    Entity.upsert_all(data, unique_by: nil)
+    ENTITIES_DATA.keys.each do |key|
+      parent = Entity.find_by(name: ENTITIES_DATA[key][:parent])
+      child = Entity.find_by(name: ENTITIES_DATA[key][:name])
+      next if parent.blank? || child.blank?
+
+      child.update!(parent: parent)
+    end
+    puts 'entities in DB have been created' if VERBOSE
+
+    puts 'DB ELEMENTS HAVE BEEN CREATED FROM DATA' if VERBOSE
+  end
+end
+
+puts 'SCRIPT STARTING'
+data_hash = load_schema_from_web
+collect_datatypes(data_hash)
+collect_more_specific_datatypes(data_hash)
+collect_enums(data_hash)
+collect_enums(data_hash)
+collect_enum_members(data_hash)
+collect_fields_and_actions(data_hash)
+display_summary(data_hash['@graph'])
+data_hash2 = load_tree_from_web
+call_recursive_loop(data_hash2)
+create_files_from_data
+feed_DB_from_data
 puts 'SCRIPT ENDING'
