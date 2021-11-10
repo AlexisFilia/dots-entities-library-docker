@@ -3,9 +3,10 @@ module Types
     field :all_datatypes, resolver: Resolvers::DatatypeSearch
     field :all_enumeration_members, resolver: Resolvers::EnumerationMemberSearch
     field :all_enums, resolver: Resolvers::EnumSearch
-    field :all_fields, resolver: Resolvers::FieldSearch
-    field :all_actions, resolver: Resolvers::ActionSearch
+    # field :all_field_models, resolver: Resolvers::FieldModelSearch
+    field :all_action_models, resolver: Resolvers::ActionModelSearch
     field :all_entities, resolver: Resolvers::EntitySearch
+    field :all_sections, resolver: Resolvers::SectionSearch
     # Add `node(id: ID!) and `nodes(ids: [ID!]!)`
     include GraphQL::Types::Relay::HasNodeField
     include GraphQL::Types::Relay::HasNodesField
@@ -26,19 +27,34 @@ module Types
                         description: 'Get the details of one enum'
     end
 
-    field :action, ActionType, null: true do
+    field :action_model, ActionModelType, null: true do
       argument :id, ID, required: true,
                         description: 'Get the details of one action'
     end
 
-    field :field, FieldType, null: true do
+    field :field_model, FieldModelType, null: true do
       argument :id, ID, required: true,
                         description: 'Get the details of one field'
+    end
+
+    field :action, ActionType, null: true do
+      argument :id, ID, required: true,
+                        description: 'Get the details of one action linked to an entity'
+    end
+
+    field :field, FieldType, null: true do
+      argument :id, ID, required: true,
+                        description: 'Get the details of one field linked to an entity'
     end
 
     field :entity, EntityType, null: true do
       argument :id, ID, required: true,
                         description: 'Get the details of one entity'
+    end
+
+    field :section, SectionType, null: true do
+      argument :id, ID, required: true,
+                        description: 'Get the details of one section'
     end
 
     def datatype(arg)
@@ -53,6 +69,14 @@ module Types
       Enum.find(arg[:id])
     end
 
+    def field_model(arg)
+      FieldModel.find(arg[:id])
+    end
+
+    def action_model(arg)
+      ActionModel.find(arg[:id])
+    end
+
     def field(arg)
       Field.find(arg[:id])
     end
@@ -63,6 +87,10 @@ module Types
 
     def entity(arg)
       Entity.find(arg[:id])
+    end
+
+    def section(arg)
+      Section.find(arg[:id])
     end
   end
 end

@@ -1,4 +1,4 @@
-class Types::OptionTableType < Types::BaseUnion
+class Types::FieldOptionTableType < Types::BaseUnion
   description 'Option for field: Datatype or Enum'
 
   possible_types Types::DatatypeType,

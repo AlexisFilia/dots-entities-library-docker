@@ -1,25 +1,21 @@
 module Resolvers
-  class ActionSearch < Resolvers::BaseSearchResolver
-    type [Types::ActionType], null: false
-    description 'Lists and filters actions'
+  class ActionModelSearch < Resolvers::BaseSearchResolver
+    type [Types::ActionModelType], null: false
+    description 'Lists and filters action_models'
 
-    scope { Action.all }
+    scope { ActionModel.all }
 
     # inline input type definition for the advanced filter
-    class ActionFilter < ::Types::BaseInputObject
+    class ActionModelFilter < ::Types::BaseInputObject
       argument :OR, [self], required: false
       argument :name, String, required: false
       argument :name_contains, String, required: false
-      argument :labels, String, required: false
-      argument :labels_contains, String, required: false
-      argument :descriptions, String, required: false
-      argument :descriptions_contains, String, required: false
       argument :inverse, String, required: false
       argument :main, String, required: false
     end
 
     # when "filter" is passed "apply_filter" would be called to narrow the scope
-    option :filter, type: ActionFilter, with: :apply_filter
+    option :filter, type: ActionModelFilter, with: :apply_filter
     # when "pagination" is passed "apply_pagination" would be called to narrow the scope
     option :pagination, type: Pagination, with: :apply_pagination
     # when "order_by" is passed "apply_order_by" would be called to narrow the scope
@@ -32,14 +28,10 @@ module Resolvers
     end
 
     def normalize_filters(value, branches = [])
-      scope = Action.all
+      scope = ActionModel.all
 
       scope = scope.where(name: value[:name]) if value[:name]
       scope = scope.where('name LIKE ?', "%#{value[:name_contains]}%") if value[:name_contains]
-      scope = scope.where(labels: value[:labels]) if value[:labels]
-      scope = scope.where('labels LIKE ?', "%#{value[:labels_contains]}%") if value[:labels_contains]
-      scope = scope.where(descriptions: value[:descriptions]) if value[:descriptions]
-      scope = scope.where('descriptions LIKE ?', "%#{value[:descriptions_contains]}%") if value[:descriptions_contains]
       scope = scope.where(inverse: value[:inverse]) if value[:inverse]
       scope = scope.where(main: value[:main]) if value[:main]
 

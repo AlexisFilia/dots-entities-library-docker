@@ -1,23 +1,19 @@
 module Resolvers
-  class FieldSearch < Resolvers::BaseSearchResolver
-    type [Types::FieldType], null: false
-    description 'Lists and filters fields'
+  class FieldModelSearch < Resolvers::BaseSearchResolver
+    type [Types::FieldModelType], null: false
+    description 'Lists and filters field_models'
 
-    scope { Field.all }
+    scope { FieldModel.all }
 
     # inline input type definition for the advanced filter
-    class FieldFilter < ::Types::BaseInputObject
+    class FieldModelFilter < ::Types::BaseInputObject
       argument :OR, [self], required: false
       argument :name, String, required: false
       argument :name_contains, String, required: false
-      argument :labels, String, required: false
-      argument :labels_contains, String, required: false
-      argument :descriptions, String, required: false
-      argument :descriptions_contains, String, required: false
     end
 
     # when "filter" is passed "apply_filter" would be called to narrow the scope
-    option :filter, type: FieldFilter, with: :apply_filter
+    option :filter, type: FieldModelFilter, with: :apply_filter
     # when "pagination" is passed "apply_pagination" would be called to narrow the scope
     option :pagination, type: Pagination, with: :apply_pagination
     # when "order_by" is passed "apply_order_by" would be called to narrow the scope
@@ -30,14 +26,10 @@ module Resolvers
     end
 
     def normalize_filters(value, branches = [])
-      scope = Field.all
+      scope = FieldModel.all
 
       scope = scope.where(name: value[:name]) if value[:name]
       scope = scope.where('name LIKE ?', "%#{value[:name_contains]}%") if value[:name_contains]
-      scope = scope.where(labels: value[:labels]) if value[:labels]
-      scope = scope.where('labels LIKE ?', "%#{value[:labels_contains]}%") if value[:labels_contains]
-      scope = scope.where(descriptions: value[:descriptions]) if value[:descriptions]
-      scope = scope.where('descriptions LIKE ?', "%#{value[:descriptions_contains]}%") if value[:descriptions_contains]
 
       branches << scope
 
