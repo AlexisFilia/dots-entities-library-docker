@@ -1,6 +1,5 @@
 class Action < ApplicationRecord
-  has_many :agent_links
-  has_many :agents, through: :agent_links, source: :entity
-  has_many :target_links
-  has_many :targets, through: :target_links, source: :entity
+  belongs_to :action_model
+  has_many :localizables, as: :localizable, dependent: :destroy
+  has_many :sectionables, as: :sectionable, dependent: :destroy
 end

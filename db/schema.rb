@@ -10,61 +10,53 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_04_142409) do
+ActiveRecord::Schema.define(version: 2021_11_10_184350) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "actions", force: :cascade do |t|
+  create_table "action_models", force: :cascade do |t|
     t.string "name"
-    t.string "labels"
-    t.string "descriptions"
     t.string "inverse"
     t.string "main"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "agent_links", force: :cascade do |t|
-    t.bigint "entity_id", null: false
-    t.bigint "action_id", null: false
+  create_table "actions", force: :cascade do |t|
+    t.boolean "is_default"
+    t.bigint "action_model_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["action_id"], name: "index_agent_links_on_action_id"
+    t.index ["action_model_id"], name: "index_actions_on_action_model_id"
+  end
+
+  create_table "agent_links", force: :cascade do |t|
+    t.bigint "entity_id", null: false
+    t.bigint "action_model_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["action_model_id"], name: "index_agent_links_on_action_model_id"
     t.index ["entity_id"], name: "index_agent_links_on_entity_id"
   end
 
   create_table "datatypes", force: :cascade do |t|
     t.string "name"
-    t.string "labels"
-    t.string "descriptions"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "entities", force: :cascade do |t|
     t.string "name"
-    t.string "labels"
-    t.string "descriptions"
+    t.string "order"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "ancestry"
     t.index ["ancestry"], name: "index_entities_on_ancestry"
   end
 
-  create_table "entities_fields", force: :cascade do |t|
-    t.bigint "entity_id", null: false
-    t.bigint "field_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["entity_id"], name: "index_entities_fields_on_entity_id"
-    t.index ["field_id"], name: "index_entities_fields_on_field_id"
-  end
-
   create_table "enumeration_members", force: :cascade do |t|
     t.string "name"
-    t.string "labels"
-    t.string "descriptions"
     t.bigint "enum_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -73,55 +65,81 @@ ActiveRecord::Schema.define(version: 2021_11_04_142409) do
 
   create_table "enums", force: :cascade do |t|
     t.string "name"
-    t.string "labels"
-    t.string "descriptions"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "field_models", force: :cascade do |t|
+    t.string "name"
+    t.string "code"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "field_options", force: :cascade do |t|
-    t.bigint "field_id", null: false
+    t.bigint "field_model_id", null: false
     t.string "option_type", null: false
     t.bigint "option_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["field_id"], name: "index_field_options_on_field_id"
+    t.index ["field_model_id"], name: "index_field_options_on_field_model_id"
     t.index ["option_type", "option_id"], name: "index_field_options_on_option"
   end
 
   create_table "fields", force: :cascade do |t|
-    t.string "name"
-    t.string "labels"
-    t.string "descriptions"
+    t.boolean "is_default"
+    t.bigint "field_model_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["field_model_id"], name: "index_fields_on_field_model_id"
   end
 
-  create_table "settings", force: :cascade do |t|
-    t.string "name"
+  create_table "localizables", force: :cascade do |t|
+    t.string "type_of"
+    t.string "language"
     t.string "value"
+    t.string "localizable_type", null: false
+    t.bigint "localizable_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["localizable_type", "localizable_id"], name: "index_localizables_on_localizable"
+  end
+
+  create_table "section_elements", force: :cascade do |t|
+    t.bigint "section_id", null: false
+    t.string "sectionable_type", null: false
+    t.bigint "sectionable_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["section_id"], name: "index_section_elements_on_section_id"
+    t.index ["sectionable_type", "sectionable_id"], name: "index_section_elements_on_sectionable"
+  end
+
+  create_table "sections", force: :cascade do |t|
+    t.string "order"
     t.bigint "entity_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["entity_id"], name: "index_settings_on_entity_id"
+    t.index ["entity_id"], name: "index_sections_on_entity_id"
   end
 
   create_table "target_links", force: :cascade do |t|
     t.bigint "entity_id", null: false
-    t.bigint "action_id", null: false
+    t.bigint "action_model_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["action_id"], name: "index_target_links_on_action_id"
+    t.index ["action_model_id"], name: "index_target_links_on_action_model_id"
     t.index ["entity_id"], name: "index_target_links_on_entity_id"
   end
 
-  add_foreign_key "agent_links", "actions"
+  add_foreign_key "actions", "action_models"
+  add_foreign_key "agent_links", "action_models"
   add_foreign_key "agent_links", "entities"
-  add_foreign_key "entities_fields", "entities"
-  add_foreign_key "entities_fields", "fields"
   add_foreign_key "enumeration_members", "enums"
-  add_foreign_key "field_options", "fields"
-  add_foreign_key "settings", "entities"
-  add_foreign_key "target_links", "actions"
+  add_foreign_key "field_options", "field_models"
+  add_foreign_key "fields", "field_models"
+  add_foreign_key "section_elements", "sections"
+  add_foreign_key "sections", "entities"
+  add_foreign_key "target_links", "action_models"
   add_foreign_key "target_links", "entities"
 end
