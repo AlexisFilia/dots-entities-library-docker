@@ -14,9 +14,15 @@ module Types
     field :siblings, [Types::EntityType], null: true
     field :subtree, [Types::EntityType], null: true
     field :path, [Types::EntityType], null: true
-    field :labels, [Types::LocalizableType], null: true
-    field :descriptions, [Types::LocalizableType], null: true
     field :created_at, GraphQL::Types::ISO8601DateTime, null: false
     field :updated_at, GraphQL::Types::ISO8601DateTime, null: false
+
+    field :labels, [Types::LocalizableType], null: true do
+      argument :language_is, String, required: false, default_value: nil
+    end
+
+    field :descriptions, [Types::LocalizableType], null: true do
+      argument :language_is, String, required: false, default_value: nil
+    end
   end
 end
