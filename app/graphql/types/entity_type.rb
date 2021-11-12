@@ -3,9 +3,10 @@ module Types
     field :id, GraphQL::Types::ID, null: false
     field :name, String, null: true
     field :sections, [Types::SectionType], null: true
-    # field :fields, [Types::FieldType], null: true
-    # field :actions, [Types::ActionType], null: true
+    field :fields, [Types::FieldType], null: true
+    field :actions, [Types::ActionType], null: true
     field :target_of, [Types::ActionModelType], null: true
+    field :action_models, [Types::ActionModelType], null: true
     field :parent, Types::EntityType, null: true
     field :children, [Types::EntityType], null: true
     field :ancestors, [Types::EntityType], null: true
@@ -13,6 +14,8 @@ module Types
     field :siblings, [Types::EntityType], null: true
     field :subtree, [Types::EntityType], null: true
     field :path, [Types::EntityType], null: true
+    field :labels, [Types::LocalizableType], null: true
+    field :descriptions, [Types::LocalizableType], null: true
     field :created_at, GraphQL::Types::ISO8601DateTime, null: false
     field :updated_at, GraphQL::Types::ISO8601DateTime, null: false
   end

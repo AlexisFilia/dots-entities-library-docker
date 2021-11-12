@@ -3,7 +3,7 @@ module Types
     field :all_datatypes, resolver: Resolvers::DatatypeSearch
     field :all_enumeration_members, resolver: Resolvers::EnumerationMemberSearch
     field :all_enums, resolver: Resolvers::EnumSearch
-    # field :all_field_models, resolver: Resolvers::FieldModelSearch
+    field :all_field_models, resolver: Resolvers::FieldModelSearch
     field :all_action_models, resolver: Resolvers::ActionModelSearch
     field :all_entities, resolver: Resolvers::EntitySearch
     field :all_sections, resolver: Resolvers::SectionSearch

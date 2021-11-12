@@ -5,8 +5,8 @@ class Types::SectionOptionTableType < Types::BaseUnion
                  Types::ActionType
 
   def self.resolve_type(object, _context)
-    if object.is_a?(Fieldtype)
-      Types::FieldtypeType
+    if object.is_a?(Field)
+      Types::FieldType
     elsif object.is_a?(Action)
       Types::ActionType
     end

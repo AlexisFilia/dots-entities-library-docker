@@ -24,7 +24,7 @@ ActiveRecord::Schema.define(version: 2021_11_10_184350) do
   end
 
   create_table "actions", force: :cascade do |t|
-    t.boolean "is_default"
+    t.boolean "is_default", default: true
     t.bigint "action_model_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -78,16 +78,16 @@ ActiveRecord::Schema.define(version: 2021_11_10_184350) do
 
   create_table "field_options", force: :cascade do |t|
     t.bigint "field_model_id", null: false
-    t.string "option_type", null: false
-    t.bigint "option_id", null: false
+    t.string "optionable_type", null: false
+    t.bigint "optionable_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["field_model_id"], name: "index_field_options_on_field_model_id"
-    t.index ["option_type", "option_id"], name: "index_field_options_on_option"
+    t.index ["optionable_type", "optionable_id"], name: "index_field_options_on_optionable"
   end
 
   create_table "fields", force: :cascade do |t|
-    t.boolean "is_default"
+    t.boolean "is_default", default: true
     t.bigint "field_model_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -116,6 +116,7 @@ ActiveRecord::Schema.define(version: 2021_11_10_184350) do
   end
 
   create_table "sections", force: :cascade do |t|
+    t.string "name"
     t.string "order"
     t.bigint "entity_id", null: false
     t.datetime "created_at", precision: 6, null: false

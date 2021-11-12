@@ -6,4 +6,16 @@ class FieldModel < ApplicationRecord
   has_many :datatypes, through: :field_options, source: :option, source_type: 'Datatype'
   has_many :enums, through: :field_options, source: :option, source_type: 'Enum'
   has_many :enumeration_members, through: :enums
+
+  def options
+    field_options.map(&:optionable)
+  end
+
+  def labels
+    localizables.where(type_of: 'label')
+  end
+
+  def descriptions
+    localizables.where(type_of: 'description')
+  end
 end
