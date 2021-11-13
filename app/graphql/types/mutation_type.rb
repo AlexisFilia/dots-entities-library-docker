@@ -10,5 +10,8 @@ module Types
     field :createOrUpdateActionModels, mutation: Mutations::CreateOrUpdateActionModels
     field :create_or_update_entity, mutation: Mutations::CreateOrUpdateEntity
     field :create_or_update_entities, mutation: Mutations::CreateOrUpdateEntities
+    field :create_or_update_localizable, mutation: Mutations::CreateOrUpdateLocalizable
+    field :create_or_update_enumeration_member, mutation: Mutations::CreateOrUpdateEnumerationMember
+    field :create_or_update_section, mutation: Mutations::CreateOrUpdateSection
   end
 end
