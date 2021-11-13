@@ -6,6 +6,8 @@ class ActionModel < ApplicationRecord
   has_many :actions, dependent: :destroy
   has_many :localizables, as: :localizable, dependent: :destroy
 
+  validates :name, uniqueness: true
+
   def labels
     localizables.where(type_of: 'label')
   end

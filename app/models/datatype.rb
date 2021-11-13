@@ -3,6 +3,8 @@ class Datatype < ApplicationRecord
   has_many :fields, through: :field_options
   has_many :localizables, as: :localizable, dependent: :destroy
 
+  validates :name, uniqueness: true
+
   def labels
     localizables.where(type_of: 'label')
   end

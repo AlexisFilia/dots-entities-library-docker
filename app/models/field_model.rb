@@ -7,6 +7,8 @@ class FieldModel < ApplicationRecord
   has_many :enums, through: :field_options, source: :option, source_type: 'Enum'
   has_many :enumeration_members, through: :enums
 
+  validates :name, uniqueness: true
+
   def options
     field_options.map(&:optionable)
   end

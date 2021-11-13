@@ -10,6 +10,8 @@ class Entity < ApplicationRecord
 
   has_many :localizables, as: :localizable, dependent: :destroy
 
+  validates :name, uniqueness: true
+
   def labels(arg)
     labels = localizables.where(type_of: 'label')
     labels = labels.where(language: arg[:language_is]) if arg[:language_is]
