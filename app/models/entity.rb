@@ -12,6 +12,12 @@ class Entity < ApplicationRecord
 
   validates :name, uniqueness: true
 
+  after_create :create_root_section
+
+  def create_root_section
+    Section.create!(name: 'section 1', entity: self)
+  end
+
   def labels(arg)
     labels = localizables.where(type_of: 'label')
     labels = labels.where(language: arg[:language_is]) if arg[:language_is]
