@@ -10,6 +10,8 @@ module Types
     field :create_or_update_fields, mutation: Mutations::CreateOrUpdateFields
     field :create_or_update_action_model, mutation: Mutations::CreateOrUpdateActionModel
     field :create_or_update_action_models, mutation: Mutations::CreateOrUpdateActionModels
+    field :create_or_update_action, mutation: Mutations::CreateOrUpdateAction
+    field :create_or_update_actions, mutation: Mutations::CreateOrUpdateActions
     field :create_or_update_entity, mutation: Mutations::CreateOrUpdateEntity
     field :create_or_update_entities, mutation: Mutations::CreateOrUpdateEntities
     field :create_or_update_localizable, mutation: Mutations::CreateOrUpdateLocalizable
