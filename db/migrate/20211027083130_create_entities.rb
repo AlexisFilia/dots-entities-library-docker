@@ -2,7 +2,7 @@ class CreateEntities < ActiveRecord::Migration[6.1]
   def change
     create_table :entities do |t|
       t.string :name
-      t.string :order
+      t.string :order, default: '[]'
 
       t.timestamps
     end

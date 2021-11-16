@@ -10,7 +10,7 @@ module Mutations
       model.attributes = attributes.to_h
 
       if model.save
-        { field_model: model }
+        { enumeration_member: model }
       else
         { errors: model.errors.full_messages }
       end

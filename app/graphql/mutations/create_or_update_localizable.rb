@@ -10,7 +10,7 @@ module Mutations
       model.attributes = attributes.to_h
 
       if model.save
-        { entity: model }
+        { localizable: model }
       else
         { errors: model.errors.full_messages }
       end

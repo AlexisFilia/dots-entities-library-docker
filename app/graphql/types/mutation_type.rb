@@ -1,17 +1,21 @@
 module Types
   class MutationType < Types::BaseObject
-    field :createOrUpdateEnum, mutation: Mutations::CreateOrUpdateEnum
-    field :createOrUpdateEnums, mutation: Mutations::CreateOrUpdateEnums
-    field :createOrUpdateDatatype, mutation: Mutations::CreateOrUpdateDatatype
-    field :createOrUpdateDatatypes, mutation: Mutations::CreateOrUpdateDatatypes
-    field :createOrUpdateFieldModel, mutation: Mutations::CreateOrUpdateFieldModel
-    field :createOrUpdateFieldModels, mutation: Mutations::CreateOrUpdateFieldModels
-    field :createOrUpdateActionModel, mutation: Mutations::CreateOrUpdateActionModel
-    field :createOrUpdateActionModels, mutation: Mutations::CreateOrUpdateActionModels
+    field :create_or_update_enum, mutation: Mutations::CreateOrUpdateEnum
+    field :create_or_update_enums, mutation: Mutations::CreateOrUpdateEnums
+    field :create_or_update_datatype, mutation: Mutations::CreateOrUpdateDatatype
+    field :create_or_update_datatypes, mutation: Mutations::CreateOrUpdateDatatypes
+    field :create_or_update_field_model, mutation: Mutations::CreateOrUpdateFieldModel
+    field :create_or_update_field_models, mutation: Mutations::CreateOrUpdateFieldModels
+    field :create_or_update_field, mutation: Mutations::CreateOrUpdateField
+    field :create_or_update_fields, mutation: Mutations::CreateOrUpdateFields
+    field :create_or_update_action_model, mutation: Mutations::CreateOrUpdateActionModel
+    field :create_or_update_action_models, mutation: Mutations::CreateOrUpdateActionModels
     field :create_or_update_entity, mutation: Mutations::CreateOrUpdateEntity
     field :create_or_update_entities, mutation: Mutations::CreateOrUpdateEntities
     field :create_or_update_localizable, mutation: Mutations::CreateOrUpdateLocalizable
     field :create_or_update_enumeration_member, mutation: Mutations::CreateOrUpdateEnumerationMember
+    field :create_or_update_enumeration_members, mutation: Mutations::CreateOrUpdateEnumerationMembers
     field :create_or_update_section, mutation: Mutations::CreateOrUpdateSection
+    field :create_or_update_field_options, mutation: Mutations::CreateOrUpdateFieldOptions
   end
 end

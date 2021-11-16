@@ -12,10 +12,12 @@ class Entity < ApplicationRecord
 
   validates :name, uniqueness: true
 
-  after_create :create_root_section
+  after_create :create_roots_section
 
-  def create_root_section
-    Section.create!(name: 'section 1', entity: self)
+  def create_roots_section
+    s1 = Section.create!(name: 'fieldsRootSection', entity: self)
+    s2 = Section.create!(name: 'actionsRootSection', entity: self)
+    update(order: "[#{s1.id},#{s2.id}]")
   end
 
   def labels(arg)

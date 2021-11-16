@@ -4,11 +4,11 @@ module Mutations
 
     type [Types::EntityType]
 
-    def resolve(elements:)
+    def resolve(elements: [])
       data = []
       ActiveRecord::Base.transaction do
         elements.each do |element|
-          data << find_or_update_element(element, 'Entity')
+          data << create_or_update_element(element, 'Entity')
         end
       end
       data
