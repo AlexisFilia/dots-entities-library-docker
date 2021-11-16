@@ -8,7 +8,7 @@ module Mutations
       data = []
       ActiveRecord::Base.transaction do
         elements.each do |element|
-          data << create_or_update_element(element, 'Field')
+          data << create_or_update_properties(element, 'Field')
         end
       end
       data

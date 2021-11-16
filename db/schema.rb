@@ -118,6 +118,7 @@ ActiveRecord::Schema.define(version: 2021_11_10_184350) do
   create_table "sections", force: :cascade do |t|
     t.string "name"
     t.string "order", default: "[]"
+    t.string "element_type", default: "Field"
     t.bigint "entity_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false

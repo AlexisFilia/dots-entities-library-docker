@@ -3,6 +3,7 @@ class CreateSections < ActiveRecord::Migration[6.1]
     create_table :sections do |t|
       t.string :name
       t.string :order, default: '[]'
+      t.string :element_type, default: 'Field'
       t.references :entity, null: false, foreign_key: true
 
       t.timestamps

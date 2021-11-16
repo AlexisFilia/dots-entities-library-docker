@@ -19,17 +19,18 @@ module Mutations
 
         if id.blank?
           section = Section.find(attributes.section_id)
+          check_section_type(section, model)
           order = JSON.parse(section.order)
           order << model.id
           section.update(order: order)
           SectionElement.create(section: section, sectionable: model)
         elsif previous_section_id != attributes.section_id
-          puts previous_section_id
           previous_section = Section.find(previous_section_id)
           previous_section_order = JSON.parse(previous_section.order)
           previous_section_order.delete(model.id)
           previous_section.update(order: previous_section_order)
           new_section = Section.find(attributes.section_id)
+          check_section_type(new_section, model)
           new_section_order = JSON.parse(new_section.order)
           new_section_order << model.id
           new_section.update(order: new_section_order)

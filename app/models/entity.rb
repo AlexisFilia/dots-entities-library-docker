@@ -16,7 +16,7 @@ class Entity < ApplicationRecord
 
   def create_roots_section
     s1 = Section.create!(name: 'fieldsRootSection', entity: self)
-    s2 = Section.create!(name: 'actionsRootSection', entity: self)
+    s2 = Section.create!(name: 'actionsRootSection', entity: self, element_type: 'Action')
     update(order: "[#{s1.id},#{s2.id}]")
   end
 
