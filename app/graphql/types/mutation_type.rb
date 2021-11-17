@@ -19,5 +19,7 @@ module Types
     field :create_or_update_enumeration_members, mutation: Mutations::CreateOrUpdateEnumerationMembers
     field :create_or_update_section, mutation: Mutations::CreateOrUpdateSection
     field :create_or_update_field_options, mutation: Mutations::CreateOrUpdateFieldOptions
+    field :create_or_update_localizable, mutation: Mutations::CreateOrUpdateLocalizable
+    field :create_or_update_localizables, mutation: Mutations::CreateOrUpdateLocalizables
   end
 end
