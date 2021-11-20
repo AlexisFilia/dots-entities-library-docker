@@ -5,7 +5,7 @@ module Types
     value 'ActionModel'
     value 'Field'
     value 'FieldModel'
-    value 'Dataype'
+    value 'Datatype'
     value 'Enum'
     value 'EnumerationMember'
   end

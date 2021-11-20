@@ -3,8 +3,10 @@ class Entity < ApplicationRecord
 
   has_many :sections, dependent: :destroy
 
-  has_many :agent_links, dependent: :destroy
-  has_many :action_models, through: :agent_links
+  has_many :section_elements, through: :sections
+  has_many :actions, through: :section_elements
+  has_many :action_models, through: :actions
+
   has_many :target_links, dependent: :destroy
   has_many :target_of, through: :target_links, source: :action_model
 

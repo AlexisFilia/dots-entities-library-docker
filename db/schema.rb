@@ -31,15 +31,6 @@ ActiveRecord::Schema.define(version: 2021_11_10_184350) do
     t.index ["action_model_id"], name: "index_actions_on_action_model_id"
   end
 
-  create_table "agent_links", force: :cascade do |t|
-    t.bigint "entity_id", null: false
-    t.bigint "action_model_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["action_model_id"], name: "index_agent_links_on_action_model_id"
-    t.index ["entity_id"], name: "index_agent_links_on_entity_id"
-  end
-
   create_table "datatypes", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
@@ -135,8 +126,6 @@ ActiveRecord::Schema.define(version: 2021_11_10_184350) do
   end
 
   add_foreign_key "actions", "action_models"
-  add_foreign_key "agent_links", "action_models"
-  add_foreign_key "agent_links", "entities"
   add_foreign_key "enumeration_members", "enums"
   add_foreign_key "field_options", "field_models"
   add_foreign_key "fields", "field_models"

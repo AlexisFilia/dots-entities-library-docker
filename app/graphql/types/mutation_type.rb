@@ -21,5 +21,7 @@ module Types
     field :create_or_update_field_options, mutation: Mutations::CreateOrUpdateFieldOptions
     field :create_or_update_localizable, mutation: Mutations::CreateOrUpdateLocalizable
     field :create_or_update_localizables, mutation: Mutations::CreateOrUpdateLocalizables
+    field :create_or_update_target_link, mutation: Mutations::CreateOrUpdateTargetLink
+    field :create_or_update_target_links, mutation: Mutations::CreateOrUpdateTargetLinks
   end
 end
