@@ -12,11 +12,13 @@ class GraphqlController < ApplicationController
       # Query context goes here, for example:
       # current_user: current_user,
     }
-    result = DotsEntitiesLibrarySchema.execute(query, variables: variables, context: context, operation_name: operation_name)
+    result = DotsEntitiesLibrarySchema.execute(query, variables: variables, context: context,
+                                                      operation_name: operation_name)
     render json: result
   rescue StandardError => e
-    raise e unless Rails.env.development?
-    handle_error_in_development(e)
+    render json: { errors: [{ message: e.message, backtrace: e.backtrace }], data: {} }, status: 500
+    # raise e unless Rails.env.development?
+    # handle_error_in_development(e)
   end
 
   private
