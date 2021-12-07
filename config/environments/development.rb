@@ -9,7 +9,11 @@ Rails.application.configure do
   config.cache_classes = false
 
   # Add by Alexis for Docker Test
-  config.hosts << 'ec2-3-139-77-130.us-east-2.compute.amazonaws.com'
+  config.hosts = [
+    IPAddr.new('0.0.0.0/0'), # All IPv4 addresses.
+    IPAddr.new('::/0'),      # All IPv6 addresses.
+    'localhost'              # The localhost reserved domain.
+  ]
 
   # Do not eager load code on boot.
   config.eager_load = false
