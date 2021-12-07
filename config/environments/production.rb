@@ -7,7 +7,7 @@ Rails.application.configure do
   config.cache_classes = true
 
   # Add by Alexis for Docker Test
-  config.hosts << 'ec2-3-139-77-130.us-east-2.compute.amazonaws.com'
+  config.hosts << 'ec2-3-141-16-146.us-east-2.compute.amazonaws.com'
 
   # Eager load code on boot. This eager loads most of Rails and
   # your application in memory, allowing both threaded web servers

@@ -14,6 +14,7 @@ Rails.application.configure do
     IPAddr.new('::/0'),      # All IPv6 addresses.
     'localhost'              # The localhost reserved domain.
   ]
+  config.hosts << 'ec2-3-141-16-146.us-east-2.compute.amazonaws.com'
 
   # Do not eager load code on boot.
   config.eager_load = false
