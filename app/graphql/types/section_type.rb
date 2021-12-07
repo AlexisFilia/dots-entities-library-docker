@@ -2,7 +2,7 @@ module Types
   class SectionType < Types::BaseObject
     field :id, GraphQL::Types::ID, null: false
     field :name, String, null: true
-    field :order, String, null: true
+    field :order, [GraphQL::Types::ID], null: true
     field :entity, Types::EntityType, null: true
     field :element_type, String, null: true
     field :elements, [Types::SectionOptionTableType], null: true

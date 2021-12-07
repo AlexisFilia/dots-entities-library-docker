@@ -5,4 +5,8 @@ class Section < ApplicationRecord
   def elements
     section_elements.map(&:sectionable)
   end
+
+  def order
+    JSON.parse(super)
+  end
 end

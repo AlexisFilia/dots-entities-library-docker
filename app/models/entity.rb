@@ -22,6 +22,10 @@ class Entity < ApplicationRecord
     update(order: "[#{s1.id},#{s2.id}]")
   end
 
+  def order
+    JSON.parse(super)
+  end
+
   def labels(arg)
     labels = localizables.where(type_of: 'label')
     labels = labels.where(language: arg[:language_is]) if arg[:language_is]
