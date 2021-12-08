@@ -57,6 +57,11 @@ module Types
                         description: 'Get the details of one section'
     end
 
+    # GET specials info
+    field :stats, StatisticsType, null: true, description: 'Get the statistics of the database'
+
+    # Methods
+
     def datatype(arg)
       Datatype.find(arg[:id])
     end
@@ -91,6 +96,10 @@ module Types
 
     def section(arg)
       Section.find(arg[:id])
+    end
+
+    def stats
+      {}
     end
   end
 end
