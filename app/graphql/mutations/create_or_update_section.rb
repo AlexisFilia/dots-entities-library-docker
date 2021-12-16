@@ -7,7 +7,9 @@ module Mutations
 
     def resolve(attributes:, id: nil)
       model = find_or_build_model(id)
-      unless model.id.blank? || model.entity_id == attributes[:entity_id]
+      pp attributes[:entity_id]
+      pp model.entity_id
+      unless model.id.blank? || model.entity_id == attributes[:entity_id].to_i
         raise GraphQL::ExecutionError,
               "You can't link this section to an other entity"
       end

@@ -18,6 +18,7 @@ class GraphqlController < ApplicationController
   rescue StandardError => e
     render json: { errors: [{ message: e.message, backtrace: e.backtrace }], data: {} }, status: 500
     # raise e unless Rails.env.development?
+
     # handle_error_in_development(e)
   end
 

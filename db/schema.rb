@@ -10,12 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_10_184350) do
+ActiveRecord::Schema.define(version: 2021_12_15_144843) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "action_models", force: :cascade do |t|
+  create_table "actions", force: :cascade do |t|
     t.string "name"
     t.string "inverse"
     t.string "main"
@@ -23,23 +23,28 @@ ActiveRecord::Schema.define(version: 2021_11_10_184350) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "actions", force: :cascade do |t|
-    t.boolean "is_default", default: true
-    t.bigint "action_model_id", null: false
+  create_table "actions_entities", force: :cascade do |t|
+    t.bigint "entity_id", null: false
+    t.bigint "action_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["action_model_id"], name: "index_actions_on_action_model_id"
+    t.index ["action_id"], name: "index_actions_entities_on_action_id"
+    t.index ["entity_id"], name: "index_actions_entities_on_entity_id"
   end
 
-  create_table "datatypes", force: :cascade do |t|
-    t.string "name"
+  create_table "composants", force: :cascade do |t|
+    t.string "code"
+    t.bigint "field_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["field_id"], name: "index_composants_on_field_id"
   end
 
   create_table "entities", force: :cascade do |t|
     t.string "name"
     t.string "order", default: "[]"
+    t.string "default_fields", default: "[]"
+    t.string "default_actions", default: "[]"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "ancestry"
@@ -48,41 +53,32 @@ ActiveRecord::Schema.define(version: 2021_11_10_184350) do
 
   create_table "enumeration_members", force: :cascade do |t|
     t.string "name"
-    t.bigint "enum_id", null: false
+    t.bigint "fieldtype_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["enum_id"], name: "index_enumeration_members_on_enum_id"
-  end
-
-  create_table "enums", force: :cascade do |t|
-    t.string "name"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-  end
-
-  create_table "field_models", force: :cascade do |t|
-    t.string "name"
-    t.string "code"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-  end
-
-  create_table "field_options", force: :cascade do |t|
-    t.bigint "field_model_id", null: false
-    t.string "optionable_type", null: false
-    t.bigint "optionable_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["field_model_id"], name: "index_field_options_on_field_model_id"
-    t.index ["optionable_type", "optionable_id"], name: "index_field_options_on_optionable"
+    t.index ["fieldtype_id"], name: "index_enumeration_members_on_fieldtype_id"
   end
 
   create_table "fields", force: :cascade do |t|
-    t.boolean "is_default", default: true
-    t.bigint "field_model_id", null: false
+    t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["field_model_id"], name: "index_fields_on_field_model_id"
+  end
+
+  create_table "fields_fieldtypes", force: :cascade do |t|
+    t.bigint "field_id", null: false
+    t.bigint "fieldtype_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["field_id"], name: "index_fields_fieldtypes_on_field_id"
+    t.index ["fieldtype_id"], name: "index_fields_fieldtypes_on_fieldtype_id"
+  end
+
+  create_table "fieldtypes", force: :cascade do |t|
+    t.string "name"
+    t.string "type_of"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "localizables", force: :cascade do |t|
@@ -116,21 +112,12 @@ ActiveRecord::Schema.define(version: 2021_11_10_184350) do
     t.index ["entity_id"], name: "index_sections_on_entity_id"
   end
 
-  create_table "target_links", force: :cascade do |t|
-    t.bigint "entity_id", null: false
-    t.bigint "action_model_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["action_model_id"], name: "index_target_links_on_action_model_id"
-    t.index ["entity_id"], name: "index_target_links_on_entity_id"
-  end
-
-  add_foreign_key "actions", "action_models"
-  add_foreign_key "enumeration_members", "enums"
-  add_foreign_key "field_options", "field_models"
-  add_foreign_key "fields", "field_models"
+  add_foreign_key "actions_entities", "actions"
+  add_foreign_key "actions_entities", "entities"
+  add_foreign_key "composants", "fields"
+  add_foreign_key "enumeration_members", "fieldtypes"
+  add_foreign_key "fields_fieldtypes", "fields"
+  add_foreign_key "fields_fieldtypes", "fieldtypes"
   add_foreign_key "section_elements", "sections"
   add_foreign_key "sections", "entities"
-  add_foreign_key "target_links", "action_models"
-  add_foreign_key "target_links", "entities"
 end

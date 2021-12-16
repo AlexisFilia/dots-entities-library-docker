@@ -3,12 +3,7 @@ class Entity < ApplicationRecord
 
   has_many :sections, dependent: :destroy
 
-  has_many :section_elements, through: :sections
-  has_many :actions, through: :section_elements
-  has_many :action_models, through: :actions
-
-  has_many :target_links, dependent: :destroy
-  has_many :target_of, through: :target_links, source: :action_model
+  has_and_belongs_to_many :actions
 
   has_many :localizables, as: :localizable, dependent: :destroy
 
@@ -26,15 +21,15 @@ class Entity < ApplicationRecord
     JSON.parse(super)
   end
 
-  def labels(arg)
-    labels = localizables.where(type_of: 'label')
-    labels = labels.where(language: arg[:language_is]) if arg[:language_is]
-    labels
+  def default_fields
+    JSON.parse(super)
   end
 
-  def descriptions(arg)
-    descriptions = localizables.where(type_of: 'description')
-    descriptions = descriptions.where(language: arg[:language_is]) if arg[:language_is]
-    descriptions
+  def default_actions
+    JSON.parse(super)
+  end
+
+  def target_of
+    actions
   end
 end

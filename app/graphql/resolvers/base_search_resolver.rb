@@ -17,11 +17,11 @@ module Resolvers
     end
 
     def apply_pagination(scope, value)
-      branches = normalize_pagination(value, scope).reduce { |a, b| a.or(b) }
+      normalize_pagination(value, scope).reduce { |a, b| a.or(b) }
     end
 
     def apply_order_by(scope, value)
-      branches = normalize_order_by(value, scope).reduce { |a, b| a.or(b) }
+      normalize_order_by(value, scope).reduce { |a, b| a.or(b) }
     end
 
     def normalize_pagination(value, scope, branches = [])

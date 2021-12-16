@@ -1,20 +1,20 @@
 module Types
   class QueryType < Types::BaseObject
-    field :all_datatypes, resolver: Resolvers::DatatypeSearch
+    field :all_fieldtypes, resolver: Resolvers::FieldtypeSearch
     field :all_enumeration_members, resolver: Resolvers::EnumerationMemberSearch
-    field :all_enums, resolver: Resolvers::EnumSearch
-    field :all_field_models, resolver: Resolvers::FieldModelSearch
-    field :all_action_models, resolver: Resolvers::ActionModelSearch
+    field :all_fields, resolver: Resolvers::FieldSearch
+    field :all_actions, resolver: Resolvers::ActionSearch
     field :all_entities, resolver: Resolvers::EntitySearch
     field :all_sections, resolver: Resolvers::SectionSearch
+    field :all_composants, resolver: Resolvers::ComposantSearch
     # Add `node(id: ID!) and `nodes(ids: [ID!]!)`
     include GraphQL::Types::Relay::HasNodeField
     include GraphQL::Types::Relay::HasNodesField
 
     # GET INFO FROM ONE ELEMENT
-    field :datatype, DatatypeType, null: true do
+    field :fieldtype, FieldtypeType, null: true do
       argument :id, ID, required: true,
-                        description: 'Get the details of one datatype'
+                        description: 'Get the details of one fieldtype'
     end
 
     field :enumeration_member, EnumerationMemberType, null: true do
@@ -22,29 +22,14 @@ module Types
                         description: 'Get the details of one enumeration_member'
     end
 
-    field :enum, EnumType, null: true do
-      argument :id, ID, required: true,
-                        description: 'Get the details of one enum'
-    end
-
-    field :action_model, ActionModelType, null: true do
+    field :action, ActionType, null: true do
       argument :id, ID, required: true,
                         description: 'Get the details of one action'
     end
 
-    field :field_model, FieldModelType, null: true do
-      argument :id, ID, required: true,
-                        description: 'Get the details of one field'
-    end
-
-    field :action, ActionType, null: true do
-      argument :id, ID, required: true,
-                        description: 'Get the details of one action linked to an entity'
-    end
-
     field :field, FieldType, null: true do
       argument :id, ID, required: true,
-                        description: 'Get the details of one field linked to an entity'
+                        description: 'Get the details of one field'
     end
 
     field :entity, EntityType, null: true do
@@ -62,24 +47,12 @@ module Types
 
     # Methods
 
-    def datatype(arg)
-      Datatype.find(arg[:id])
+    def fieldtype(arg)
+      Fieldtype.find(arg[:id])
     end
 
     def enumeration_member(arg)
       EnumerationMember.find(arg[:id])
-    end
-
-    def enum(arg)
-      Enum.find(arg[:id])
-    end
-
-    def field_model(arg)
-      FieldModel.find(arg[:id])
-    end
-
-    def action_model(arg)
-      ActionModel.find(arg[:id])
     end
 
     def field(arg)

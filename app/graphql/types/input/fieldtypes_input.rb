@@ -1,7 +1,7 @@
 module Types
   module Input
-    class FieldsInput < Types::BaseInputObject
-      argument :name, String, required: true
+    class FieldtypesInput < Types::BaseInputObject
+      argument :name, String, required: false
       argument :id, GraphQL::Types::ID, required: false
     end
   end
