@@ -9,15 +9,13 @@ module Mutations
       ActiveRecord::Base.transaction do
         elements.each do |element|
           if element[:id]
-            data = ActionsEntity.find(element[:id])
-            data.update(element.to_h.except(:id))
-          elsif ActionsEntity.exists?(entity_id: element[:entity_id], action_model_id: element[:action_model_id])
-            data = ActionsEntity.find_by(entity_id: element[:entity_id], action_model_id: element[:action_model_id])
-            data.update(element.to_h.except(:entity_id, :action_model_id))
+
           else
-            data = ActionsEntity.create!(element.to_h)
+            action = Action.find(element[:action_id])
+            entity = Entity.find(element[:entity_id])
+            action.entities << entity
           end
-          response << data
+          response << entity
         end
       end
       response
