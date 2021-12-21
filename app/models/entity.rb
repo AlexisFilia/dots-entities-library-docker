@@ -2,6 +2,7 @@ class Entity < ApplicationRecord
   has_ancestry
 
   has_many :sections, dependent: :destroy
+  has_many :section_elements, through: :sections
 
   has_and_belongs_to_many :actions
 
@@ -10,6 +11,10 @@ class Entity < ApplicationRecord
   validates :name, uniqueness: true
 
   after_create :create_roots_section
+
+  def elements
+    section_elements.map(&:sectionable)
+  end
 
   def create_roots_section
     s1 = Section.create!(name: 'fieldsRootSection', entity: self)

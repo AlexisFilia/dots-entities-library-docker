@@ -20,5 +20,7 @@ module Types
     field :create_or_update_actions_entities, mutation: Mutations::CreateOrUpdateActionsEntities
     field :create_or_update_fields_fieldtypes, mutation: Mutations::CreateOrUpdateFieldsFieldtypes
     field :create_or_update_section_elements, mutation: Mutations::CreateOrUpdateSectionElements
+
+    field :toggle_default, mutation: Mutations::ToggleDefault
   end
 end
