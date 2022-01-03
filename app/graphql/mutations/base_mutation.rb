@@ -83,7 +83,7 @@ module Mutations
       if element[:id].blank?
         check_section_type(section, model)
         order = section.order
-        order << model.id
+        order << element[:element_id]
         section.update(order: order)
         SectionElement.create!(section: section, sectionable: model)
       else
@@ -91,11 +91,11 @@ module Mutations
         if previous_section_id != element[:section_id]
           previous_section = Section.find(previous_section_id)
           previous_section_order = previous_section.order
-          previous_section_order.delete(model.id)
+          previous_section_order.delete(element[:element_id])
           previous_section.update(order: previous_section_order)
           check_section_type(section, model)
           section_order = section.order
-          section_order << model.id
+          section_order << element[:element_id]
           section.update(order: section_order)
           section_element = SectionElement.find_by(section: previous_section, sectionable: model)
           section_element.update(section: section, sectionable: model)

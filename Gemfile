@@ -40,7 +40,6 @@ group :development do
   gem 'spring'
   gem 'graphql-rails-generators'
   gem 'search_object_graphql'
-
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

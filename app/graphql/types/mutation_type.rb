@@ -1,5 +1,6 @@
 module Types
   class MutationType < Types::BaseObject
+    field :destroySection, mutation: Mutations::DestroySection
     field :create_or_update_fieldtype, mutation: Mutations::CreateOrUpdateFieldtype
     field :create_or_update_fieldtypes, mutation: Mutations::CreateOrUpdateFieldtypes
     field :create_or_update_field, mutation: Mutations::CreateOrUpdateField
@@ -20,6 +21,11 @@ module Types
     field :create_or_update_actions_entities, mutation: Mutations::CreateOrUpdateActionsEntities
     field :create_or_update_fields_fieldtypes, mutation: Mutations::CreateOrUpdateFieldsFieldtypes
     field :create_or_update_section_elements, mutation: Mutations::CreateOrUpdateSectionElements
+
+    field :destroy_section, mutation: Mutations::DestroySection
+    field :destroy_composant, mutation: Mutations::DestroyComposant
+    field :destroy_localizable, mutation: Mutations::DestroyLocalizable
+    field :destroy_section_element, mutation: Mutations::DestroySectionElement
 
     field :toggle_default, mutation: Mutations::ToggleDefault
   end

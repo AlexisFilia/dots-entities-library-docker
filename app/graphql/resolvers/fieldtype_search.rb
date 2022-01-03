@@ -8,7 +8,7 @@ module Resolvers
     # inline input type definition for the advanced filter
     class FieldtypeFilter < Types::BaseInputObject
       argument :OR, [self], required: false
-      argument :type_of, String, required: false
+      argument :type_of, Types::Enum::FieldtypeEnumType, required: false
       argument :name, String, required: false
       argument :name_contains, String, required: false
       argument :labels, String, required: false

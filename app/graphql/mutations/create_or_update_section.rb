@@ -7,11 +7,21 @@ module Mutations
 
     def resolve(attributes:, id: nil)
       model = find_or_build_model(id)
-      pp attributes[:entity_id]
-      pp model.entity_id
-      unless model.id.blank? || model.entity_id == attributes[:entity_id].to_i
+      unless model.id.blank? || model.entity_id == attributes[:entity_id].to_i || attributes[:entity_id].blank?
         raise GraphQL::ExecutionError,
               "You can't link this section to an other entity"
+      end
+      unless model.element_type.blank? || model.element_type == attributes[:element_type] || attributes[:element_type].blank?
+        raise GraphQL::ExecutionError,
+              "You can't change the element_type once it's defined"
+      end
+      if model.name == 'fieldsRootSection' || model.name == 'actionsRootSection'
+        raise GraphQL::ExecutionError,
+              "You can't changeb 'fieldsRootSection' or 'actionsRootSection' name"
+      end
+      if attributes[:name] == 'fieldsRootSection' || attributes[:name] == 'actionsRootSection'
+        raise GraphQL::ExecutionError,
+              "You can't use 'fieldsRootSection' or 'actionsRootSection' as a name for your sections"
       end
 
       model.attributes = attributes.to_h
