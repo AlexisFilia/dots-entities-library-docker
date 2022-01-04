@@ -9,6 +9,9 @@ module Resolvers
     class SectionFilter < ::Types::BaseInputObject
       argument :OR, [self], required: false
       argument :entity_id, ID, required: false
+      argument :element_type, Types::Enum::SectionTypeEnumType, required: false
+      argument :name, String, required: false
+      argument :name_contains, String, required: false
     end
 
     # when "filter" is passed "apply_filter" would be called to narrow the scope
@@ -28,6 +31,9 @@ module Resolvers
       scope = Section.all
 
       scope = scope.where(entity_id: value[:entity_id]) if value[:entity_id]
+      scope = scope.where(element_type: value[:element_type]) if value[:element_type]
+      scope = scope.where(name: value[:name]) if value[:name]
+      scope = scope.where('name LIKE ?', "%#{value[:name_contains]}%") if value[:name_contains]
 
       branches << scope
 

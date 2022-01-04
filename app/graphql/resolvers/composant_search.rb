@@ -9,6 +9,7 @@ module Resolvers
     class ComposantFilter < ::Types::BaseInputObject
       argument :OR, [self], required: false
       argument :code, String, required: false
+      argument :code_contains, String, required: false
       argument :field_ids, [ID], required: false
     end
 
@@ -30,6 +31,7 @@ module Resolvers
 
       scope = scope.where(code: value[:code]) if value[:code]
       scope = scope.where(entity_id: value[:entity_ids]) unless value[:entity_ids].blank?
+      scope = scope.where('code LIKE ?', "%#{value[:code_contains]}%") if value[:code_contains]
 
       branches << scope
 
