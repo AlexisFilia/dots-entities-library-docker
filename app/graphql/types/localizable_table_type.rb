@@ -1,5 +1,5 @@
 class Types::LocalizableTableType < Types::BaseUnion
-  description 'Option for section: Field or Action'
+  description "Option for localizable: 'entity', 'action', 'field', 'fieldtype, enumerationMember"
 
   possible_types Types::EntityType,
                  Types::ActionType,

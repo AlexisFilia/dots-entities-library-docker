@@ -1,5 +1,5 @@
 class Types::SectionOptionTableType < Types::BaseUnion
-  description 'Option for section: Field or Action'
+  description "Option for section: 'field' or 'action'"
 
   possible_types Types::FieldType,
                  Types::ActionType

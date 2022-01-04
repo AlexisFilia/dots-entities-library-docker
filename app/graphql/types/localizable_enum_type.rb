@@ -1,12 +1,9 @@
 module Types
   class Types::LocalizableEnumType < Types::BaseEnum
-    value 'Entity'
-    value 'Action'
-    value 'ActionModel'
-    value 'Field'
-    value 'FieldModel'
-    value 'Datatype'
-    value 'Enum'
-    value 'EnumerationMember'
+    value 'entity'
+    value 'action'
+    value 'field'
+    value 'fieldtype'
+    value 'enumerationMember'
   end
 end

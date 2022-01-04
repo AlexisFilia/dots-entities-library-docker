@@ -8,6 +8,8 @@ module Mutations
       response = []
       ActiveRecord::Base.transaction do
         elements.each do |element|
+          element[:localizable_type] = element[:localizable_type].upcase_first
+
           if element[:id]
             data = Localizable.find(element[:id])
             data.update(element.to_h.except(:id))

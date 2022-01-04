@@ -2,7 +2,7 @@ module Types
   class EntityType < Types::BaseObject
     field :id, GraphQL::Types::ID, null: false
     field :name, String, null: true
-    field :order, [GraphQL::Types::ID], null: true
+    field :child_order, [GraphQL::Types::ID], null: true
     field :default_fields, [GraphQL::Types::ID], null: true
     field :default_actions, [GraphQL::Types::ID], null: true
     field :sections, [Types::SectionType], null: true

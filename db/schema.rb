@@ -42,7 +42,7 @@ ActiveRecord::Schema.define(version: 2021_12_15_144843) do
 
   create_table "entities", force: :cascade do |t|
     t.string "name"
-    t.string "order", default: "[]"
+    t.string "child_order", default: "[]"
     t.string "default_fields", default: "[]"
     t.string "default_actions", default: "[]"
     t.datetime "created_at", precision: 6, null: false
@@ -104,8 +104,8 @@ ActiveRecord::Schema.define(version: 2021_12_15_144843) do
 
   create_table "sections", force: :cascade do |t|
     t.string "name"
-    t.string "order", default: "[]"
-    t.string "element_type", default: "Field"
+    t.string "child_order", default: "[]"
+    t.string "element_type", default: "field"
     t.bigint "entity_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
