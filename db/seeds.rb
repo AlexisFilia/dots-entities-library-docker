@@ -8,8 +8,8 @@
 # f4 = Field.create!(name: 'field4')
 # f5 = Field.create!(name: 'field5')
 
-# ft1 = Fieldtype.create!(name: 'ftum1', type_of: 'Datatype')
-# en1 = Fieldtype.create!(name: 'ftum2', type_of: 'Enum')
+# ft1 = Fieldtype.create!(name: 'ftum1', type_of: 'datatype')
+# en1 = Fieldtype.create!(name: 'ftum2', type_of: 'enum')
 
 # em1 = EnumerationMember.create!(name: 'enum_m1', fieldtype: en1)
 # em2 = EnumerationMember.create!(name: 'enum_m2', fieldtype: en1)
@@ -31,10 +31,10 @@
 # a5 = Action.create!(name: 'action5')
 # a6 = Action.create!(name: 'action6')
 
-# s1 = Section.where(element_type: 'Field').first
-# s2 = Section.where(element_type: 'Action').first
-# s3 = Section.where(element_type: 'Field').last
-# s4 = Section.where(element_type: 'Action').last
+# s1 = Section.where(element_type: 'field').first
+# s2 = Section.where(element_type: 'action').first
+# s3 = Section.where(element_type: 'field').last
+# s4 = Section.where(element_type: 'action').last
 
 # SectionElement.create!(section: s1, sectionable: f1)
 # SectionElement.create!(section: s1, sectionable: f2)
