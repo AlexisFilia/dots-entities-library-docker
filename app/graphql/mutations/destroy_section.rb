@@ -11,9 +11,9 @@ module Mutations
               "You can't destroy 'fieldsRootSection' or 'actionsRootSection'"
       end
       entity = model.entity
-      entity_order = entity.order
-      entity_order.delete(model.id)
-      entity.update(order: entity_order)
+      entity_child_order = entity.child_order
+      entity_child_order.delete(model.id)
+      entity.update(child_order: entity_child_order)
       model.destroy
     end
   end

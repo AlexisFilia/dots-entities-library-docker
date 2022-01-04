@@ -10,9 +10,9 @@ module Mutations
       attributes[:sectionable_type] = attributes[:sectionable_type].upcase_first
       model = SectionElement.find_by!(attributes)
       section = model.section
-      section_order = section.order
-      section_order.delete(attributes[:sectionable_id])
-      section.update!(order: section_order)
+      section_child_order = section.child_order
+      section_child_order.delete(attributes[:sectionable_id])
+      section.update!(child_order: section_child_order)
       model.destroy
     end
   end

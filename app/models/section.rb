@@ -6,7 +6,7 @@ class Section < ApplicationRecord
     section_elements.map(&:sectionable)
   end
 
-  def order
+  def child_order
     JSON.parse(super)
   end
 end

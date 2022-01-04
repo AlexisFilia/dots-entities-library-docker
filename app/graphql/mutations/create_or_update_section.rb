@@ -26,14 +26,14 @@ module Mutations
 
       model.attributes = attributes.to_h
       ActiveRecord::Base.transaction do
-        order_to_update = model.id.blank? ? true : false
+        child_order_to_update = model.id.blank? ? true : false
 
         if model.save
-          if order_to_update
+          if child_order_to_update
             entity = Entity.find(attributes[:entity_id])
-            order = entity.order
-            order << model.id
-            entity.update!(order: order)
+            child_order = entity.child_order
+            child_order << model.id
+            entity.update!(child_order: child_order)
           end
           model
         else
