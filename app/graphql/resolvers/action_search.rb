@@ -6,7 +6,7 @@ module Resolvers
     scope { Action.all }
 
     # inline input type definition for the advanced filter
-    class ActionFilter < ::Types::BaseInputObject
+    class ActionFilter < Types::BaseInputObject
       argument :OR, [self], required: false
       argument :name, String, required: false
       argument :name_contains, String, required: false

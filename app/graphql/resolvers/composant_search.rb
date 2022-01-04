@@ -6,7 +6,7 @@ module Resolvers
     scope { Composant.all }
 
     # inline input type definition for the advanced filter
-    class ComposantFilter < ::Types::BaseInputObject
+    class ComposantFilter < Types::BaseInputObject
       argument :OR, [self], required: false
       argument :code, String, required: false
       argument :code_contains, String, required: false

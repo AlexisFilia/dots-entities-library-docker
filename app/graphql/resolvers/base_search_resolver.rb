@@ -5,13 +5,13 @@ module Resolvers
     include SearchObject.module(:graphql)
 
     # inline input type definition for the pagination
-    class Pagination < ::Types::BaseInputObject
+    class Pagination < Types::BaseInputObject
       argument :first, Integer, required: false
       argument :skip, Integer, required: false
     end
 
     # inline input type definition for the order_by
-    class OrderBy < ::Types::BaseInputObject
+    class OrderBy < Types::BaseInputObject
       argument :order_by, String, required: false
       argument :direction, Types::DirectionEnumType, required: false
     end

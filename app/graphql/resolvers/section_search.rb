@@ -6,7 +6,7 @@ module Resolvers
     scope { Section.all }
 
     # inline input type definition for the advanced filter
-    class SectionFilter < ::Types::BaseInputObject
+    class SectionFilter < Types::BaseInputObject
       argument :OR, [self], required: false
       argument :entity_id, ID, required: false
       argument :element_type, Types::Enum::SectionTypeEnumType, required: false

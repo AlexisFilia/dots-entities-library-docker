@@ -6,7 +6,7 @@ module Resolvers
     scope { Entity.all }
 
     # inline input type definition for the advanced filter
-    class EntityFilter < ::Types::BaseInputObject
+    class EntityFilter < Types::BaseInputObject
       argument :OR, [self], required: false
       argument :name, String, required: false
       argument :name_contains, String, required: false
