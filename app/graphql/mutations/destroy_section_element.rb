@@ -7,6 +7,7 @@ module Mutations
     type Types::SectionElementType
 
     def resolve(**attributes)
+      attributes[:sectionable_type] = attributes[:sectionable_type].upcase_first
       model = SectionElement.find_by!(attributes)
       section = model.section
       section_order = section.order

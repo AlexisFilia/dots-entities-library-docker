@@ -1,8 +1,8 @@
 module Types
   module Enum
     class SectionTypeEnumType < Types::BaseEnum
-      value 'Field'
-      value 'Action'
+      value 'field'
+      value 'action'
     end
   end
 end

@@ -79,7 +79,7 @@ module Mutations
 
     def create_or_update_section_elements(element)
       section = Section.find(element[:section_id])
-      model = element[:type_of].constantize.find(element[:element_id])
+      model = element[:type_of].upcase_first.constantize.find(element[:element_id])
       if element[:id].blank?
         check_section_type(section, model)
         order = section.order

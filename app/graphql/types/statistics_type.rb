@@ -18,7 +18,7 @@ module Types
     def count(args)
       return nil if args[:model].blank?
 
-      args[:model].constantize.count
+      args[:model].upcase_first.constantize.count
     end
 
     def number_of_entity_fields(args)

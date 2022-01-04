@@ -6,7 +6,7 @@ module Mutations
 
     def resolve(attributes:)
       entity = Entity.find(attributes[:entity_id])
-      element = attributes[:element_type].constantize.find(attributes[:element_id])
+      element = attributes[:element_type].upcase_first.constantize.find(attributes[:element_id])
       check_element_presence_for_entity(entity, element)
 
       default_elements = entity.send("default_#{element.class.name.downcase}s")
