@@ -6,7 +6,7 @@ module Mutations
     object_class Types::BaseObject
 
     def check_section_type(section, model)
-      unless section.element_type == model.class.name
+      unless section.element_type.upcase_first == model.class.name
         raise GraphQL::ExecutionError,
               'This section does not accept this type of element'
       end
@@ -79,7 +79,11 @@ module Mutations
 
     def create_or_update_section_elements(element)
       section = Section.find(element[:section_id])
+      pp element[:type_of]
+      pp element[:type_of].upcase_first
       model = element[:type_of].upcase_first.constantize.find(element[:element_id])
+      pp model
+      puts '-----------------'
       if element[:id].blank?
         check_section_type(section, model)
         child_order = section.child_order
@@ -88,8 +92,12 @@ module Mutations
         SectionElement.create!(section: section, sectionable: model)
       else
         previous_section_id = SectionElement.find(element[:id]).section_id
+        pp previous_section_id
+        puts '-----------------1'
         if previous_section_id != element[:section_id]
           previous_section = Section.find(previous_section_id)
+          pp previous_section
+          puts '-----------------2'
           previous_section_child_order = previous_section.child_order
           previous_section_child_order.delete(element[:element_id])
           previous_section.update(child_order: previous_section_child_order)

@@ -7,6 +7,7 @@ module Mutations
 
     def resolve(attributes:, id: nil)
       model = find_or_build_model(id)
+      attributes[:localizable_type] = attributes[:localizable_type].upcase_first
       model.attributes = attributes.to_h
 
       if model.save

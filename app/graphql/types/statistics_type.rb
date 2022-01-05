@@ -12,7 +12,7 @@ module Types
       argument :is_default, Boolean, required: false, default_value: nil
     end
     field :number_of_enumeration_members, Integer, null: true do
-      argument :enum_id, GraphQL::Types::ID, required: false, default_value: nil
+      argument :fieldtype_id, GraphQL::Types::ID, required: false, default_value: nil
     end
 
     def count(args)
@@ -21,26 +21,32 @@ module Types
       args[:model].upcase_first.constantize.count
     end
 
-    def number_of_entity_fields(args)
-      return nil if args[:entity_id].blank?
-
-      data = Field.joins(:section).where(section: { entity_id: args[:entity_id] })
-      data = data.where(is_default: args[:is_default]) if !!args[:is_default] == args[:is_default]
-      data.count
-    end
-
     def number_of_entity_actions(args)
       return nil if args[:entity_id].blank?
 
-      data = Action.joins(:section).where(section: { entity_id: args[:entity_id] })
-      data = data.where(is_default: args[:is_default]) if !!args[:is_default] == args[:is_default]
+      data = Action.joins(:sections).where(sections: { entity_id: args[:entity_id] })
+      if !!args[:is_default] == args[:is_default]
+        ids = Entity.find(args[:entity_id]).child_order
+        data = data.where(id: ids)
+      end
+      data.count
+    end
+
+    def number_of_entity_fields(args)
+      return nil if args[:entity_id].blank?
+
+      data = Field.joins(:sections).where(sections: { entity_id: args[:entity_id] })
+      if !!args[:is_default] == args[:is_default]
+        ids = Entity.find(args[:entity_id]).child_order
+        data = data.where(id: ids)
+      end
       data.count
     end
 
     def number_of_enumeration_members(args)
-      return nil if args[:enum_id].blank?
+      return nil if args[:fieldtype_id].blank?
 
-      EnumerationMember.where(enum_id: args[:enum_id]).count
+      EnumerationMember.where(fieldtype_id: args[:fieldtype_id]).count
     end
   end
 end
