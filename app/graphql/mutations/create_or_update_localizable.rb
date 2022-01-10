@@ -7,15 +7,11 @@ module Mutations
 
     def resolve(attributes:, id: nil)
       model = find_or_build_model(id)
-      attributes[:localizable_type] = attributes[:localizable_type].upcase_first
-      model.attributes = attributes.to_h
+      localizable_type = attributes[:localizable_type].upcase_first
+      model.attributes = attributes.to_h.except(:localizable_type)
+      model.localizable_type = localizable_type
 
-      if model.save
-        { localizable: model }
-      else
-        { errors: model.errors.full_messages }
-      end
-      model
+      model if model.save!
     end
 
     def find_or_build_model(id)

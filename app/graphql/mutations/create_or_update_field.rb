@@ -11,11 +11,7 @@ module Mutations
         # previous_section_id = model.section.blank? ? nil : model.section.id
         model.attributes = attributes.to_h.except(:section_id)
 
-        if model.save
-          model
-        else
-          model.errors.full_messages
-        end
+        model if model.save!
 
         # if id.blank?
         #   section = Section.find(attributes.section_id)

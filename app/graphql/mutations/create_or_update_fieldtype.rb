@@ -9,12 +9,7 @@ module Mutations
       model = find_or_build_model(id)
       model.attributes = attributes.to_h
 
-      if model.save
-        { datatype: model }
-      else
-        { errors: model.errors.full_messages }
-      end
-      model
+      model if model.save!
     end
 
     def find_or_build_model(id)

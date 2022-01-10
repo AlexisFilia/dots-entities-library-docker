@@ -28,7 +28,7 @@ module Mutations
       ActiveRecord::Base.transaction do
         child_order_to_update = model.id.blank? ? true : false
 
-        if model.save
+        if model.save!
           if child_order_to_update
             entity = Entity.find(attributes[:entity_id])
             child_order = entity.child_order
@@ -36,8 +36,6 @@ module Mutations
             entity.update!(child_order: child_order)
           end
           model
-        else
-          model.errors.full_messages
         end
       end
     end
