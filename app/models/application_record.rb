@@ -12,4 +12,14 @@ class ApplicationRecord < ActiveRecord::Base
     descriptions = descriptions.where(language: arg[:language_is]) if arg[:language_is]
     descriptions
   end
+
+  def label(language)
+    label ||= localizables.find_by(type_of: 'label', language: language)
+    label ? label.value : nil
+  end
+
+  def description(language)
+    description ||= localizables.find_by(type_of: 'description', language: language)
+    description ? description.value : nil
+  end
 end

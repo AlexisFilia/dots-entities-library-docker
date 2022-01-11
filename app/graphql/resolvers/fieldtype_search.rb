@@ -1,7 +1,7 @@
 module Resolvers
   class FieldtypeSearch < Resolvers::BaseSearchResolver
     type [Types::FieldtypeType], null: false
-    description 'Lists and filters field_types'
+    description 'Lists and filters fieldtypes'
 
     scope { Fieldtype.all }
 

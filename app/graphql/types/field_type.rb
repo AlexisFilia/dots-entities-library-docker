@@ -2,6 +2,8 @@ module Types
   class FieldType < Types::BaseObject
     field :id, GraphQL::Types::ID, null: false
     field :name, String, null: true
+    field :label, String, null: true
+    field :description, String, null: true
     field :composants, [Types::ComposantType], null: true
     field :fieldtypes, [Types::FieldtypeType], null: true
     field :created_at, GraphQL::Types::ISO8601DateTime, null: false
