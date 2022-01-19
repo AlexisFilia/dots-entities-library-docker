@@ -4,6 +4,7 @@ module Types
     field :type_of, String, null: true
     field :language, String, null: true
     field :value, String, null: true
+    field :summary, String, null: true
     field :localizable, Types::LocalizableTableType, null: true
     field :created_at, GraphQL::Types::ISO8601DateTime, null: false
     field :updated_at, GraphQL::Types::ISO8601DateTime, null: false
