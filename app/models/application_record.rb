@@ -22,4 +22,9 @@ class ApplicationRecord < ActiveRecord::Base
     description ||= localizables.find_by(type_of: 'description', language: language)
     description ? description.value : nil
   end
+
+  def description_summary(language)
+    description ||= localizables.find_by(type_of: 'description', language: language)
+    description ? description.summary : nil
+  end
 end

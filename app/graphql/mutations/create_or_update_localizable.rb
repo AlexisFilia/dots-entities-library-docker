@@ -24,7 +24,7 @@ module Mutations
         model.attributes = attributes.to_h.except(:localizable_type)
         model.localizable_type = localizable_type
       end
-      model.summary = attributes[:value][0...50] if model.type_of == 'description'
+      model.summary = attributes[:value][0...SUMMARY_MAX_LENGTH] if model.type_of == 'description'
 
       model if model.save!
     end

@@ -4,6 +4,7 @@ module Types
     field :name, String, null: true
     field :label, String, null: true
     field :description, String, null: true
+    field :description_summary, String, null: true
     field :child_order, [GraphQL::Types::ID], null: true
     field :default_fields, [GraphQL::Types::ID], null: true
     field :default_actions, [GraphQL::Types::ID], null: true

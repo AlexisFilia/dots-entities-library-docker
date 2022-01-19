@@ -5,6 +5,8 @@ module Mutations
     input_object_class Types::BaseInputObject
     object_class Types::BaseObject
 
+    SUMMARY_MAX_LENGTH = 50
+
     def check_section_type(section, model)
       unless section.element_type.upcase_first == model.class.name
         raise GraphQL::ExecutionError,

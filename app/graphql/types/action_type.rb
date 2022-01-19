@@ -6,6 +6,7 @@ module Types
     field :main, String, null: true
     field :label, String, null: true
     field :description, String, null: true
+    field :description_summary, String, null: true
     field :section, Types::SectionType, null: true
     field :entities, [Types::EntityType], null: true
     field :created_at, GraphQL::Types::ISO8601DateTime, null: false

@@ -87,6 +87,7 @@ module Types
         data = element.attributes
         data[:label] = element.label(arg[:language])
         data[:description] = element.description(arg[:language])
+        data[:description_summary] = element.description_summary(arg[:language])
         data
       else
         klass.constantize.find(arg[:id])
