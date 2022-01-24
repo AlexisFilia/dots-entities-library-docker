@@ -4,7 +4,6 @@ class CreateLocalizables < ActiveRecord::Migration[6.1]
       t.string :type_of
       t.string :language
       t.string :value
-      t.string :summary
       t.references :localizable, polymorphic: true, null: false
 
       t.timestamps

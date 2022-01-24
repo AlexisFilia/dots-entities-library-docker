@@ -46,6 +46,7 @@ module Types
     field :section, SectionType, null: true do
       argument :id, ID, required: true,
                         description: 'Get the details of one section'
+      argument :language, String, required: false
     end
 
     # GET specials info
@@ -74,7 +75,7 @@ module Types
     end
 
     def section(arg)
-      Section.find(arg[:id])
+      find_element_and_localizables(arg, 'Section')
     end
 
     def stats
@@ -88,6 +89,8 @@ module Types
         data[:label] = element.label(arg[:language])
         data[:description] = element.description(arg[:language])
         data[:description_summary] = element.description_summary(arg[:language])
+        data[:default_fields] = element.default_fields
+        data[:default_actions] = element.default_actions
         data
       else
         klass.constantize.find(arg[:id])

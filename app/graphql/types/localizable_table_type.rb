@@ -1,7 +1,8 @@
 class Types::LocalizableTableType < Types::BaseUnion
-  description "Option for localizable: 'entity', 'action', 'field', 'fieldtype, enumerationMember"
+  description "Option for localizable: 'entity', 'section', 'action', 'field', 'fieldtype, enumerationMember"
 
   possible_types Types::EntityType,
+                 Types::SectionType,
                  Types::ActionType,
                  Types::FieldType,
                  Types::FieldtypeType,
@@ -10,6 +11,8 @@ class Types::LocalizableTableType < Types::BaseUnion
   def self.resolve_type(object, _context)
     if object.is_a?(Entity)
       Types::EntityType
+    elsif object.is_a?(Section)
+      Types::SectionType
     elsif object.is_a?(Action)
       Types::ActionType
     elsif object.is_a?(Field)

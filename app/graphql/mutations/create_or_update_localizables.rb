@@ -13,19 +13,16 @@ module Mutations
           if element[:id]
             data = Localizable.find(element[:id])
             hash = element.to_h.except(:id)
-            hash[:summary] = element[:value][0...SUMMARY_MAX_LENGTH] if data.type_of == 'description'
             data.update(hash)
           elsif Localizable.exists?(type_of: element[:type_of], localizable_id: element[:localizable_id],
                                     localizable_type: localizable_type, language: element[:language])
             data = Localizable.find_by(type_of: element[:type_of], localizable_id: element[:localizable_id],
                                        localizable_type: localizable_type, language: element[:language])
             hash = element.to_h.except(:type_of, :localizable_id, :localizable_type, :language)
-            hash[:summary] = element[:value][0...SUMMARY_MAX_LENGTH] if data.type_of == 'description'
             data.update(hash)
           else
             data = Localizable.new(element.to_h.except(:localizable_type))
             data.localizable_type = localizable_type
-            data.summary = element[:value][0...SUMMARY_MAX_LENGTH] if data.type_of == 'description'
             data.save!
           end
           response << data
