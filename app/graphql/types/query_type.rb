@@ -51,6 +51,8 @@ module Types
 
     # GET specials info
     field :stats, StatisticsType, null: true, description: 'Get the statistics of the database'
+    field :clean_database, AnswerType, null: true, description: 'Empty the all database'
+    field :seed_database, AnswerType, null: true, description: 'Seed the database'
 
     # Methods
 
@@ -80,6 +82,32 @@ module Types
 
     def stats
       {}
+    end
+
+    def seed_database
+      Rails.application.load_seed
+      {
+        status: 200,
+        message: 'The database is seeded'
+        # errors: [],
+        # data: []
+      }
+    end
+
+    def clean_database
+      # ActiveRecord::Base.subclasses.each(&:delete_all)
+      Rails.application.eager_load!
+      ActiveRecord::Base.connection.disable_referential_integrity do
+        ApplicationRecord.descendants.each do |model|
+          model.delete_all
+        end
+      end
+      {
+        status: 200,
+        message: 'The database is clean'
+        # errors: [],
+        # data: []
+      }
     end
 
     def find_element_and_localizables(arg, klass)

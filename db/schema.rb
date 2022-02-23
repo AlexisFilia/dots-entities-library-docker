@@ -85,7 +85,6 @@ ActiveRecord::Schema.define(version: 2021_12_15_144843) do
     t.string "type_of"
     t.string "language"
     t.string "value"
-    t.string "summary"
     t.string "localizable_type", null: false
     t.bigint "localizable_id", null: false
     t.datetime "created_at", precision: 6, null: false
