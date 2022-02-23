@@ -16,11 +16,12 @@ ActiveRecord::Schema.define(version: 2021_12_15_144843) do
   enable_extension "plpgsql"
 
   create_table "actions", force: :cascade do |t|
-    t.string "name"
+    t.string "name", null: false
     t.string "inverse"
     t.string "main"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["name"], name: "index_actions_on_name", unique: true
   end
 
   create_table "actions_entities", force: :cascade do |t|
@@ -41,7 +42,7 @@ ActiveRecord::Schema.define(version: 2021_12_15_144843) do
   end
 
   create_table "entities", force: :cascade do |t|
-    t.string "name"
+    t.string "name", null: false
     t.string "child_order", default: "[]"
     t.string "default_fields", default: "[]"
     t.string "default_actions", default: "[]"
@@ -49,20 +50,23 @@ ActiveRecord::Schema.define(version: 2021_12_15_144843) do
     t.datetime "updated_at", precision: 6, null: false
     t.string "ancestry"
     t.index ["ancestry"], name: "index_entities_on_ancestry"
+    t.index ["name"], name: "index_entities_on_name", unique: true
   end
 
   create_table "enumeration_members", force: :cascade do |t|
-    t.string "name"
+    t.string "name", null: false
     t.bigint "fieldtype_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["fieldtype_id"], name: "index_enumeration_members_on_fieldtype_id"
+    t.index ["name"], name: "index_enumeration_members_on_name", unique: true
   end
 
   create_table "fields", force: :cascade do |t|
-    t.string "name"
+    t.string "name", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["name"], name: "index_fields_on_name", unique: true
   end
 
   create_table "fields_fieldtypes", force: :cascade do |t|
@@ -75,10 +79,11 @@ ActiveRecord::Schema.define(version: 2021_12_15_144843) do
   end
 
   create_table "fieldtypes", force: :cascade do |t|
-    t.string "name"
+    t.string "name", null: false
     t.string "type_of"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["name"], name: "index_fieldtypes_on_name", unique: true
   end
 
   create_table "localizables", force: :cascade do |t|
@@ -89,6 +94,7 @@ ActiveRecord::Schema.define(version: 2021_12_15_144843) do
     t.bigint "localizable_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["localizable_id", "localizable_type", "type_of", "language"], name: "index", unique: true
     t.index ["localizable_type", "localizable_id"], name: "index_localizables_on_localizable"
   end
 

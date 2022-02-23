@@ -8,5 +8,6 @@ class CreateLocalizables < ActiveRecord::Migration[6.1]
 
       t.timestamps
     end
+    add_index(:localizables, %i[localizable_id localizable_type type_of language], unique: true, name: 'index')
   end
 end
